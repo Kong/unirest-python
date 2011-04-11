@@ -26,22 +26,24 @@ from urlparse import urlparse
 from mashape.config.init import ModuleInfo
 
 class HttpClient:
-	METHOD = "_method"
-	TOKEN = "_token"
-	LANGUAGE = "_language"
-	VERSION = "_version"
 
-	def doCall(self, baseUrl, httpMethod, method, token, parameters):
+	def doCall(self, url, httpMethod, token, parameters):
 		if parameters == None:
 			parameters = {};
+		else:
+			for key in parameters.keys():
+				if parameters[key] == None:
+					parameters.pop(key)
 		
-		parameters[self.METHOD] = method
-		parameters[self.TOKEN] = token
-		parameters[self.LANGUAGE] = ModuleInfo.CLIENT_LIBRARY_LANGUAGE;
-		parameters[self.VERSION] = ModuleInfo.CLIENT_LIBRARY_VERSION;
+		parameters[ModuleInfo.TOKEN] = token
+		parameters[ModuleInfo.LANGUAGE] = ModuleInfo.CLIENT_LIBRARY_LANGUAGE;
+		parameters[ModuleInfo.VERSION] = ModuleInfo.CLIENT_LIBRARY_VERSION;
+		
+
 		params = urllib.urlencode(parameters)
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-		parsedUrl = urlparse(baseUrl)
+		parsedUrl = urlparse(url)
+
 		conn = httplib.HTTPConnection(parsedUrl.hostname, parsedUrl.port)
 		try:
 			url = "/" + parsedUrl.path

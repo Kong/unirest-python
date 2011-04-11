@@ -27,7 +27,7 @@ from mashape.exception.clientException import MashapeClientException
 class TokenUtil:
 
 	def requestToken(self, apiKey):
-		TOKEN_URL="https://api.mashape.com/requestToken"
+		TOKEN_URL="http://api.mashape.com/requestToken"
 		data = {'apikey' : apiKey}
 		jsonToken = urllib2.urlopen(TOKEN_URL, urllib.urlencode(data)).read()
 		answer = json.loads(jsonToken)
@@ -35,4 +35,5 @@ class TokenUtil:
 		if len(errors) == 0:
 			return answer['token']
 		else:
+			print errors
 			raise MashapeClientException(errors[0]["message"], errors[0]["code"])
