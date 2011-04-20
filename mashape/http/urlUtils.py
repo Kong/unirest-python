@@ -41,19 +41,17 @@ class UrlUtils:
 		return url.split("?")[0]
 
 	@staticmethod
-	def getQueryStringParameters(url):
+	def getQueryStringParameters(query):
 		result = {}
-		query_init = url.find("?")
-		if query_init > 0:
-			query = url(query_init+1:)	
-			for param in query.split("&")
+		if len(query) > 0:
+			for param in query.split("&"):
 				keyValue = param.split("=")
 				if(len(keyValue) > 1):
-					if (not isPlaceHolder(keyValue[1])):
+					if (not UrlUtils.isPlaceHolder(keyValue[1])):
 						result[keyValue[0]]=keyValue[1]
 		return result
 
 	@staticmethod
-	def isPlaceholder(val):
+	def isPlaceHolder(val):
 		return re.match('\{([a-z]*)\}', val)
 		

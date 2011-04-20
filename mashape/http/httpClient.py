@@ -24,6 +24,7 @@ import httplib
 import json
 from urlparse import urlparse
 from mashape.config.init import ModuleInfo
+from mashape.http.urlUtils import UrlUtils
 
 class HttpClient:
 
@@ -39,11 +40,11 @@ class HttpClient:
 		parameters[ModuleInfo.LANGUAGE] = ModuleInfo.CLIENT_LIBRARY_LANGUAGE;
 		parameters[ModuleInfo.VERSION] = ModuleInfo.CLIENT_LIBRARY_VERSION;
 		
-
-		params = urllib.urlencode(parameters)
-		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 		parsedUrl = urlparse(url)
+		parameters.update(UrlUtils.getQueryStringParameters(parsedUrl.query))
+		params = urllib.urlencode(parameters)
 
+		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 		conn = httplib.HTTPConnection(parsedUrl.hostname, parsedUrl.port)
 		try:
 			url = "/" + parsedUrl.path
