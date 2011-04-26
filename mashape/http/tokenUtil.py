@@ -35,5 +35,4 @@ class TokenUtil:
 		if len(errors) == 0:
 			return answer['token']
 		else:
-			print errors
 			raise MashapeClientException(errors[0]["message"], errors[0]["code"])
