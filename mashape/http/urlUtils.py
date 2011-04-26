@@ -30,7 +30,7 @@ class UrlUtils:
 			param = []
 
 		finalUrl = ""
-		keys = re.findall('\{([a-z_]*)\}', result)
+		keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', result)
 		for key in keys:
 			if key not in parameters:
 				re.sub("[^&?]*=\{"+key+"\}&?", "", result)
@@ -53,5 +53,5 @@ class UrlUtils:
 
 	@staticmethod
 	def isPlaceHolder(val):
-		return re.match('\{([a-z_]*)\}', val)
+		return re.match('\{([a-zA-Z0-9_\\.]*)\}', val)
 		
