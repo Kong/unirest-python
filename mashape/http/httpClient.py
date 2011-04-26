@@ -45,7 +45,12 @@ class HttpClient:
 		params = urllib.urlencode(parameters)
 
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-		conn = httplib.HTTPConnection(parsedUrl.hostname, parsedUrl.port)
+
+		if url.startswith("https"):
+			conn = httplib.HTTPSConnection(parsedUrl.hostname, parsedUrl.port)
+		else:
+			conn = httplib.HTTPConnection(parsedUrl.hostname, parsedUrl.port)
+
 		try:
 			url = "/" + parsedUrl.path
 			if (httpMethod == "GET") and (len(params) > 1):
