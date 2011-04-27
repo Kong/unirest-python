@@ -25,18 +25,6 @@ import re
 class UrlUtils:
 	
 	@staticmethod
-	def getCleanUrl(url, parameters):
-		if param == None:
-			param = []
-
-		finalUrl = ""
-		keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', result)
-		for key in keys:
-			if key not in parameters:
-				re.sub("[^&?]*=\{"+key+"\}&?", "", result)
-		return result
-	
-	@staticmethod
 	def removeQueryString(url):
 		return url.split("?")[0]
 
