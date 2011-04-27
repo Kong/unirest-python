@@ -42,7 +42,6 @@ class HttpClient:
 		
 		parsedUrl = urlparse(url)
 		parameters.update(UrlUtils.getQueryStringParameters(parsedUrl.query))
-		params = urllib.urlencode(parameters)
 
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
@@ -53,6 +52,9 @@ class HttpClient:
 
 		try:
 			url = "/" + parsedUrl.path
+			url = UrlUtils.replaceBaseUrlParameters(url, parameters)
+			params = urllib.urlencode(parameters)
+
 			if (httpMethod == "GET") and (len(params) > 1):
 				url += "?" + params
 			conn.request(httpMethod, url, params, headers)

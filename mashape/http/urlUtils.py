@@ -43,3 +43,13 @@ class UrlUtils:
 	def isPlaceHolder(val):
 		return re.match('\{([a-zA-Z0-9_\\.]*)\}', val)
 		
+	@staticmethod
+	def replaceBaseUrlParameters(url, parameters):
+		finalUrl = url
+		keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', finalUrl)
+		for key in keys:
+			if key in parameters:
+				finalUrl = re.sub("\{"+key+"\}&?", parameters[key], finalUrl)
+				parameters.pop(key)
+		return finalUrl
+		
