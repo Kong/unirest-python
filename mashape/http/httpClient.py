@@ -22,13 +22,26 @@
 import urllib
 import httplib
 import json
+import threading
 from urlparse import urlparse
 from mashape.config.init import ModuleInfo
 from mashape.http.urlUtils import UrlUtils
 
 class HttpClient:
+	def doCall(self, url, httpMethod, token, parameters, callback=None):
+		if(callback != None):
+			def thread_function(url, httpMethod, token, parameters):
+				result = self.__doCall(url, httpMethod, token, parameters)
+				callback(result)
+			thread = threading.Thread(target=thread_function, args=(url, httpMethod, token, parameters))
+			thread.start()
+			return thread
+		else:
+			return self.__doCall(url, httpMethod, token, parameters)
 
-	def doCall(self, url, httpMethod, token, parameters):
+
+	
+	def __doCall(self, url, httpMethod, token, parameters):
 		if parameters == None:
 			parameters = {};
 		else:
