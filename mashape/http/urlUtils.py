@@ -1,4 +1,5 @@
 #
+# Mashape Python Client library.
 # Copyright (C) 2011 Mashape, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,8 @@
 #
 # The author of this software is Mashape, Inc.
 # For any question or feedback please contact us at: support@mashape.com
-#++
+#
+
 from mashape.config.init import ModuleInfo
 
 import re
