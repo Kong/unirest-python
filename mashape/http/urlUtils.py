@@ -21,6 +21,7 @@
 from mashape.config.init import ModuleInfo
 
 import re
+import urllib
 
 class UrlUtils:
 	
@@ -49,7 +50,7 @@ class UrlUtils:
 		keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', finalUrl)
 		for key in keys:
 			if key in parameters:
-				finalUrl = re.sub("\{"+key+"\}&?", parameters[key], finalUrl)
+				finalUrl = re.sub("\{"+key+"\}&?", urllib.quote_plus(parameters[key]), finalUrl)
 				parameters.pop(key)
 		return finalUrl
 		
