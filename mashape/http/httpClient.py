@@ -21,7 +21,7 @@
 #
 
 import urllib
-import httplib
+import httplib2
 import json
 import threading
 from urlparse import urlparse
@@ -58,27 +58,22 @@ class HttpClient:
 		parameters.update(UrlUtils.getQueryStringParameters(parsedUrl.query))
 
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-
-		if url.startswith("https"):
-			conn = httplib.HTTPSConnection(parsedUrl.hostname, parsedUrl.port)
-		else:
-			conn = httplib.HTTPConnection(parsedUrl.hostname, parsedUrl.port)
-
+		
 		try:
-			url = "/" + parsedUrl.path
+			h = httplib2.Http()
+			qpos = url.find("?")
+			if ( qpos > 0 ):
+				url = url[:qpos]
+				
 			url = UrlUtils.replaceBaseUrlParameters(url, parameters)
 			params = urllib.urlencode(parameters)
-
-			if (httpMethod == "GET") and (len(params) > 1):
+			if (httpMethod == "GET"):
 				url += "?" + params
-			conn.request(httpMethod, url, params, headers)
-			response = conn.getresponse()
-			responseValue = response.read()
-			conn.close()
+			response, responseValue = h.request(url, httpMethod, params, headers=headers)
 		except:
 			responseValue = None
 		responseJson = None
-		if responseValue != None:
+		if responseValue != None and response.status == 200:
 			responseJson = json.loads(responseValue)
 		return responseJson
 		
