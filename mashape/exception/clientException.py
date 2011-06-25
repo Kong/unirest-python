@@ -21,6 +21,9 @@
 #
 
 class MashapeClientException(Exception):
-    def __init__(self, message, code):
-            self.message = message
-            self.code = code
+	def __init__(self, message, code):
+		self.message = message
+		self.code = code
+	
+	def __str__(self):
+		return "Error " + self.code + ": "+self.message

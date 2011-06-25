@@ -27,6 +27,7 @@ import threading
 from urlparse import urlparse
 from mashape.config.init import ModuleInfo
 from mashape.http.urlUtils import UrlUtils
+from mashape.exception.clientException import MashapeClientException
 
 class HttpClient:
 	def doCall(self, url, httpMethod, token, parameters, callback=None):
@@ -59,19 +60,21 @@ class HttpClient:
 
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 		
+		h = httplib2.Http()
+		qpos = url.find("?")
+		if ( qpos > 0 ):
+			url = url[:qpos]
+		url = UrlUtils.replaceBaseUrlParameters(url, parameters)
+
+		params = urllib.urlencode(parameters)
+		
+		if (httpMethod == "GET"):
+			url += "?" + params
 		try:
-			h = httplib2.Http()
-			qpos = url.find("?")
-			if ( qpos > 0 ):
-				url = url[:qpos]
-				
-			url = UrlUtils.replaceBaseUrlParameters(url, parameters)
-			params = urllib.urlencode(parameters)
-			if (httpMethod == "GET"):
-				url += "?" + params
 			response, responseValue = h.request(url, httpMethod, params, headers=headers)
 		except:
-			responseValue = None
+			import sys
+			raise MashapeClientException("Error execution the request " + str(sys.exc_info()[1]), 2000)
 		responseJson = None
 		if responseValue != None and response.status == 200:
 			responseJson = json.loads(responseValue)
