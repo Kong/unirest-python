@@ -32,7 +32,7 @@ class TokenUtil:
 		data = {'devkey' : devKey}
 		jsonToken = urllib2.urlopen(TOKEN_URL, urllib.urlencode(data)).read()
 		answer = json.loads(jsonToken)
-		if "error" in answer != None:
+		if "error" in answer:
 			error = answer["error"]
 			raise MashapeClientException(error["message"], error["code"])
 		else:
