@@ -30,20 +30,19 @@ from mashape.http.url_utils import UrlUtils
 from mashape.exception.client_exception import MashapeClientException
 
 class HttpClient:
-	def doCall(self, url, httpMethod, token, parameters, callback=None):
+	def do_call(self, url, httpMethod, token, parameters, callback=None):
 		if(callback != None):
 			def thread_function(url, httpMethod, token, parameters):
-				result = self.__doCall(url, httpMethod, token, parameters)
+				result = self._do_call(url, httpMethod, token, parameters)
 				callback(result)
 			thread = threading.Thread(target=thread_function, args=(url, httpMethod, token, parameters))
 			thread.start()
 			return thread
 		else:
-			return self.__doCall(url, httpMethod, token, parameters)
+			return self._do_call(url, httpMethod, token, parameters)
 
 
-	
-	def __doCall(self, url, httpMethod, token, parameters):
+	def _do_call(self, url, httpMethod, token, parameters):
 		if parameters == None:
 			parameters = {};
 		else:
@@ -56,7 +55,7 @@ class HttpClient:
 		parameters[ModuleInfo.VERSION] = ModuleInfo.CLIENT_LIBRARY_VERSION;
 		
 		parsedUrl = urlparse(url)
-		parameters.update(UrlUtils.getQueryStringParameters(parsedUrl.query))
+		parameters.update(UrlUtils.get_query_string_parameters(parsedUrl.query))
 
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 		
@@ -66,10 +65,9 @@ class HttpClient:
 		qpos = url.find("?")
 		if ( qpos > 0 ):
 			url = url[:qpos]
-		url = UrlUtils.replaceBaseUrlParameters(url, parameters)
+		url = UrlUtils.replace_base_url_parameters(url, parameters)
 
 		params = urllib.urlencode(parameters)
-		
 		if (httpMethod == "GET"):
 			url += "?" + params
 		try:
@@ -77,8 +75,6 @@ class HttpClient:
 		except:
 			import sys
 			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]), 2000)
-
-		response, responseValue = h.request(url, httpMethod, params, headers=headers)
 		responseJson = None
 		if responseValue != None and response.status == 200:
 			responseJson = json.loads(responseValue)
