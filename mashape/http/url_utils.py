@@ -55,4 +55,7 @@ class UrlUtils:
 				final_url = re.sub("\{"+key+"\}&?", urllib.quote_plus(parameters[key]), final_url)
 				parameters.pop(key)
 		return final_url
-		
+	
+	@staticmethod
+	def generate_client_headers():
+		return {"X-Mashape-Language": ModuleInfo.CLIENT_LIBRARY_LANGUAGE, "X-Mashape-Version" : ModuleInfo.CLIENT_LIBRARY_VERSION}
