@@ -20,8 +20,6 @@
 # For any question or feedback please contact us at: support@mashape.com
 #
 
-from mashape.config.module_info import ModuleInfo
-
 import re
 import urllib
 
@@ -58,4 +56,4 @@ class UrlUtils:
 	
 	@staticmethod
 	def generate_client_headers():
-		return {"X-Mashape-Language": ModuleInfo.CLIENT_LIBRARY_LANGUAGE, "X-Mashape-Version" : ModuleInfo.CLIENT_LIBRARY_VERSION}
+		return {"User-Agent": "mashape-python/1.0"}

@@ -26,7 +26,6 @@ import httplib2
 import json
 import threading
 from urlparse import urlparse
-from mashape.config.module_info import ModuleInfo
 from mashape.http.url_utils import UrlUtils
 from mashape.http.auth_utils import AuthUtils
 from mashape.exception.client_exception import MashapeClientException
