@@ -22,7 +22,6 @@
 
 import urllib
 import urllib2
-import httplib2
 import json
 import threading
 from urlparse import urlparse
@@ -31,19 +30,19 @@ from mashape.http.auth_utils import AuthUtils
 from mashape.exception.client_exception import MashapeClientException
 
 class HttpClient:
-	def do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, callback=None):
+	def do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, callback=None, parse_json=True):
 		if(callback != None):
-			def thread_function(http_method, url, parameters, has_mashape_auth, public_key, private_key):
-				result = self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key)
+			def thread_function(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json):
+				result = self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json)
 				callback(result)
-			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, has_mashape_auth, public_key, private_key))
+			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json))
 			thread.start()
 			return thread
 		else:
-			return self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key)
+			return self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json)
 
 
-	def _do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key):
+	def _do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json):
 		if parameters == None:
 			parameters = {};
 		else:
@@ -54,14 +53,14 @@ class HttpClient:
 		parsedUrl = urlparse(url)
 		parameters.update(UrlUtils.get_query_string_parameters(parsedUrl.query))
 
-		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
+		headers = {"Content-type": "application/x-www-form-urlencoded"}
+		if parse_json:
+			headers["Accept"] = "application/json"
+
 		headers.update(UrlUtils.generate_client_headers())
 		if has_mashape_auth:
 			headers.update(AuthUtils.generate_authentication_header(public_key, private_key))
 			
-		# if you have SSL issues (invalid certificate), try:
-		# h = httplib2.Http(disable_ssl_certificate_validation=True) 
-		h = httplib2.Http()
 		qpos = url.find("?")
 		if ( qpos > 0 ):
 			url = url[:qpos]
@@ -81,7 +80,8 @@ class HttpClient:
 			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]), 2000)
 
 		responseJson = None
-		if responseValue != None :
-			responseJson = json.loads(responseValue)
-		return responseJson
-		
+		if responseValue != None and parse_json:
+			responseJson = json.loads(unicode(responseValue, errors='replace'))
+			return responseJson
+		else:
+			return responseValue
