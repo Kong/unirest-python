@@ -30,19 +30,19 @@ from mashape.http.auth_utils import AuthUtils
 from mashape.exception.client_exception import MashapeClientException
 
 class HttpClient:
-	def do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, callback=None, parse_json=True):
+	def do_call(self, http_method, url, parameters, public_key, private_key, callback=None, parse_json=True):
 		if(callback != None):
-			def thread_function(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json):
-				result = self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json)
+			def thread_function(http_method, url, parameters, public_key, private_key, parse_json):
+				result = self._do_call(http_method, url, parameters, public_key, private_key, parse_json)
 				callback(result)
-			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json))
+			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, public_key, private_key, parse_json))
 			thread.start()
 			return thread
 		else:
-			return self._do_call(http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json)
+			return self._do_call(http_method, url, parameters, public_key, private_key, parse_json)
 
 
-	def _do_call(self, http_method, url, parameters, has_mashape_auth, public_key, private_key, parse_json):
+	def _do_call(self, http_method, url, parameters, public_key, private_key, parse_json):
 		if parameters == None:
 			parameters = {};
 		else:
@@ -58,7 +58,8 @@ class HttpClient:
 			headers["Accept"] = "application/json"
 
 		headers.update(UrlUtils.generate_client_headers())
-		if has_mashape_auth:
+		
+		if (!(public_key == None || private_key == None)):
 			headers.update(AuthUtils.generate_authentication_header(public_key, private_key))
 			
 		qpos = url.find("?")
