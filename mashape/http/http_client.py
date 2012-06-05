@@ -59,7 +59,7 @@ class HttpClient:
 
 		headers.update(UrlUtils.generate_client_headers())
 		
-		if (!(public_key == None || private_key == None)):
+		if (public_key != None and private_key != None):
 			headers.update(AuthUtils.generate_authentication_header(public_key, private_key))
 			
 		qpos = url.find("?")
