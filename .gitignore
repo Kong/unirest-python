@@ -1,3 +1,4 @@
 .project
 .pydevproject
 *.pyc
+.DS_Store
