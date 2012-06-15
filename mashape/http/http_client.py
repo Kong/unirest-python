@@ -78,7 +78,7 @@ class HttpClient:
 			responseValue = opener.open(request).read()
 		except:
 			import sys
-			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]), 2000)
+			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]))
 
 		responseJson = None
 		if responseValue != None and parse_json:
