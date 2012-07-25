@@ -23,37 +23,39 @@
 import re
 import urllib
 
+
 class UrlUtils:
-	
-	@staticmethod
-	def remove_query_string(url):
-		return url.split("?")[0]
 
-	@staticmethod
-	def get_query_string_parameters(query):
-		result = {}
-		if len(query) > 0:
-			for param in query.split("&"):
-				keyValue = param.split("=")
-				if(len(keyValue) > 1):
-					if (not UrlUtils.is_placeholder(keyValue[1])):
-						result[keyValue[0]]=keyValue[1]
-		return result
+    @staticmethod
+    def remove_query_string(url):
+        return url.split("?")[0]
 
-	@staticmethod
-	def is_placeholder(val):
-		return re.match('\{([a-zA-Z0-9_\\.]*)\}', val)
-		
-	@staticmethod
-	def replace_base_url_parameters(url, parameters):
-		final_url = url
-		keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', final_url)
-		for key in keys:
-			if key in parameters:
-				final_url = re.sub("\{"+key+"\}&?", urllib.quote_plus(parameters[key]), final_url)
-				parameters.pop(key)
-		return final_url
-	
-	@staticmethod
-	def generate_client_headers():
-		return {"User-Agent": "mashape-python/1.0"}
+    @staticmethod
+    def get_query_string_parameters(query):
+        result = {}
+        if len(query) > 0:
+            for param in query.split("&"):
+                keyValue = param.split("=")
+                if(len(keyValue) > 1):
+                    if (not UrlUtils.is_placeholder(keyValue[1])):
+                        result[keyValue[0]] = keyValue[1]
+        return result
+
+    @staticmethod
+    def is_placeholder(val):
+        return re.match('\{([a-zA-Z0-9_\\.]*)\}', val)
+
+    @staticmethod
+    def replace_base_url_parameters(url, parameters):
+        final_url = url
+        keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', final_url)
+        for key in keys:
+            if key in parameters:
+                final_url = re.sub("\{" + key + "\}&?",
+                        urllib.quote_plus(parameters[key]), final_url)
+                parameters.pop(key)
+        return final_url
+
+    @staticmethod
+    def generate_client_headers():
+        return {"User-Agent": "mashape-python/1.0"}

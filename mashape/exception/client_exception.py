@@ -20,7 +20,8 @@
 # For any question or feedback please contact us at: support@mashape.com
 #
 
+
 class MashapeClientException(Exception):
-	def __init__(self, message):
-		Exception.__init__(self, message)
-		self.message = message
+    def __init__(self, message):
+        Exception.__init__(self, message)
+        self.message = message

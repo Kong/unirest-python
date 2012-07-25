@@ -20,9 +20,13 @@
 # For any question or feedback please contact us at: support@mashape.com
 #
 
+
 class ExceptionMessages(object):
     EXCEPTION_NOTSUPPORTED_HTTPMETHOD_CODE = 1003
-    EXCEPTION_NOTSUPPORTED_HTTPMETHOD = "HTTP method not supported. Only DELETE, GET, POST, PUT are supported"
+    EXCEPTION_NOTSUPPORTED_HTTPMETHOD = "HTTP method not supported. Only \
+            DELETE, GET, POST, PUT are supported"
     EXCEPTION_SYSTEM_ERROR_CODE = 2000
-    EXCEPTION_EMPTY_REQUEST = "A request attempt was made to the component, but the response was empty. The component's URL may be wrong or the firewall may be blocking your outbound HTTP requests"
+    EXCEPTION_EMPTY_REQUEST = "A request attempt was made to the component, \
+            but the response was empty. The component's URL may be wrong or \
+            the firewall may be blocking your outbound HTTP requests"
     EXCEPTION_INVALID_REQUEST = "The component returned an invalid response"
