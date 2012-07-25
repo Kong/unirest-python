@@ -25,64 +25,72 @@ import urllib2
 import json
 import threading
 from urlparse import urlparse
+from mashape.auth.header_auth import HeaderAuth
+from mashape.auth.query_auth import QueryAuth
 from mashape.http.url_utils import UrlUtils
-from mashape.http.auth_utils import AuthUtils
 from mashape.exception.client_exception import MashapeClientException
 
+
 class HttpClient:
-	def do_call(self, http_method, url, parameters, public_key, private_key, callback=None, parse_json=True):
-		if(callback != None):
-			def thread_function(http_method, url, parameters, public_key, private_key, parse_json):
-				result = self._do_call(http_method, url, parameters, public_key, private_key, parse_json)
-				callback(result)
-			thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, public_key, private_key, parse_json))
-			thread.start()
-			return thread
-		else:
-			return self._do_call(http_method, url, parameters, public_key, private_key, parse_json)
+    def do_call(self, http_method, url, parameters, auth_handlers, callback=None, parse_json=True):
 
+        # for asynchronous calls
+        if(callback is not None):
+            def thread_function(http_method, url, parameters, auth_handlers, parse_json):
+                result = self._do_call(http_method, url, parameters, auth_handlers, parse_json)
+                callback(result)
+            thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, auth_handlers, parse_json))
+            thread.start()
+            return thread
+        else:
+            return self._do_call(http_method, url, parameters, auth_handlers,
+                    parse_json)
 
-	def _do_call(self, http_method, url, parameters, public_key, private_key, parse_json):
-		if parameters == None:
-			parameters = {};
-		else:
-			for key in parameters.keys():
-				if parameters[key] == None:
-					parameters.pop(key)
-		
-		parsedUrl = urlparse(url)
-		parameters.update(UrlUtils.get_query_string_parameters(parsedUrl.query))
+    def _do_call(self, http_method, url, parameters, auth_handlers, parse_json):
+        if parameters is None:
+            parameters = {}
+        else:
+            for key in parameters.keys():
+                if parameters[key] is None:
+                    parameters.pop(key)
 
-		headers = {"Content-type": "application/x-www-form-urlencoded"}
-		if parse_json:
-			headers["Accept"] = "application/json"
+        headers = {"Content-type": "application/x-www-form-urlencoded"}
+        if parse_json:
+            headers["Accept"] = "application/json"
 
-		headers.update(UrlUtils.generate_client_headers())
-		
-		if (public_key != None and private_key != None):
-			headers.update(AuthUtils.generate_authentication_header(public_key, private_key))
-			
-		qpos = url.find("?")
-		if ( qpos > 0 ):
-			url = url[:qpos]
-		url = UrlUtils.replace_base_url_parameters(url, parameters)
+        headers.update(UrlUtils.generate_client_headers())
 
-		params = urllib.urlencode(parameters)
-		if (http_method == "GET"):
-			url += "?" + params
-		opener = urllib2.build_opener(urllib2.HTTPHandler)
-		request = urllib2.Request(url, params, headers)
-		request.add_header('Content-Type', 'application/json')
-		request.get_method = lambda: http_method
-		try:
-			responseValue = opener.open(request).read()
-		except:
-			import sys
-			raise MashapeClientException("Error executing the request " + str(sys.exc_info()[1]))
+        for handler in auth_handlers:
+            if isinstance(handler, HeaderAuth):
+                headers.update(handler.handleHeader())
+            if isinstance(handler, QueryAuth):
+                parameters.update(handler.handleParams())
 
-		responseJson = None
-		if responseValue != None and parse_json:
-			responseJson = json.loads(unicode(responseValue, errors='replace'))
-			return responseJson
-		else:
-			return responseValue
+        parsedQuery = urlparse(url).query
+        parameters.update(UrlUtils.get_query_string_parameters(parsedQuery))
+
+        params = urllib.urlencode(parameters)
+        url = UrlUtils.replace_base_url_parameters(url, parameters)
+        qpos = url.find("?")
+        if (http_method == "GET") or parsedQuery is not None:
+            if (qpos > 0):
+                url = url[:qpos]
+
+            url += "?" + params
+        opener = urllib2.build_opener(urllib2.HTTPHandler)
+        request = urllib2.Request(url, params, headers)
+        request.add_header('Content-Type', 'application/json')
+        request.get_method = lambda: http_method
+        try:
+            responseValue = opener.open(request).read()
+        except:
+            import sys
+            raise MashapeClientException("Error executing the request "
+                    + str(sys.exc_info()[1]))
+
+        responseJson = None
+        if responseValue is not None and parse_json:
+            responseJson = json.loads(unicode(responseValue, errors='replace'))
+            return responseJson
+        else:
+            return responseValue
