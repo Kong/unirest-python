@@ -77,15 +77,19 @@ class HttpClient:
                 url = url[:qpos]
 
             url += "?" + params
+
         opener = urllib2.build_opener(urllib2.HTTPHandler)
         request = urllib2.Request(url, params, headers)
         request.add_header('Content-Type', 'application/json')
         request.get_method = lambda: http_method
         try:
             responseValue = opener.open(request).read()
-        except:
-            import sys
-            raise MashapeClientException("Error executing the request "
+        except urllib2.HTTPError, e:
+            if e.getcode() == 500:
+                responseValue = e.read()
+            else:
+                import sys
+                raise MashapeClientException("Error executing the request "
                     + str(sys.exc_info()[1]))
 
         responseJson = None
