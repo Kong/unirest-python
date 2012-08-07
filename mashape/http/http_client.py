@@ -75,8 +75,10 @@ class HttpClient:
         if (http_method == "GET") or parsedQuery is not None:
             if (qpos > 0):
                 url = url[:qpos]
-
             url += "?" + params
+        
+        if (http_method == "GET"):
+            params = None
 
         opener = urllib2.build_opener(urllib2.HTTPHandler)
         request = urllib2.Request(url, params, headers)
