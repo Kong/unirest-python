@@ -28,25 +28,26 @@ from urlparse import urlparse
 from mashape.auth.header_auth import HeaderAuth
 from mashape.auth.query_auth import QueryAuth
 from mashape.http.url_utils import UrlUtils
+from mashape.http.multipart_post_handler import MultipartPostHandler
+from mashape.http.content_type import ContentType 
 from mashape.exception.client_exception import MashapeClientException
 
 
 class HttpClient:
-    def do_call(self, http_method, url, parameters, auth_handlers, callback=None, parse_json=True):
+    def do_call(self, http_method, url, parameters, auth_handlers, content_type, callback=None, parse_json=True):
 
         # for asynchronous calls
         if(callback is not None):
-            def thread_function(http_method, url, parameters, auth_handlers, parse_json):
+            def thread_function(http_method, url, parameters, auth_handlers, content_type, parse_json):
                 result = self._do_call(http_method, url, parameters, auth_handlers, parse_json)
                 callback(result)
-            thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, auth_handlers, parse_json))
+            thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, auth_handlers, content_type, parse_json))
             thread.start()
             return thread
         else:
-            return self._do_call(http_method, url, parameters, auth_handlers,
-                    parse_json)
+            return self._do_call(http_method, url, parameters, auth_handlers, content_type, parse_json)
 
-    def _do_call(self, http_method, url, parameters, auth_handlers, parse_json):
+    def _do_call(self, http_method, url, parameters, auth_handlers, content_type, parse_json):
         if parameters is None:
             parameters = {}
         else:
@@ -54,7 +55,7 @@ class HttpClient:
                 if parameters[key] is None:
                     parameters.pop(key)
 
-        headers = {"Content-type": "application/x-www-form-urlencoded"}
+        headers = {}
         if parse_json:
             headers["Accept"] = "application/json"
 
@@ -67,22 +68,34 @@ class HttpClient:
                 parameters.update(handler.handleParams())
 
         parsedQuery = urlparse(url).query
+        # get all the constant query parameters and add them to the parameters dict 
         parameters.update(UrlUtils.get_query_string_parameters(parsedQuery))
-
-        params = urllib.urlencode(parameters)
+        # get rid of all the placeholder url parameters
         url = UrlUtils.replace_base_url_parameters(url, parameters)
-        qpos = url.find("?")
-        if (http_method == "GET") or parsedQuery is not None:
-            if (qpos > 0):
-                url = url[:qpos]
-            url += "?" + params
-        
-        if (http_method == "GET"):
-            params = None
 
-        opener = urllib2.build_opener(urllib2.HTTPHandler)
+
+        if content_type is ContentType.MULTIPART:
+            params = parameters
+            opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
+        else:
+            headers["Content-type"] = "application/x-www-form-urlencoded";
+            opener = urllib2.build_opener(urllib2.HTTPHandler)
+
+            # If we still have parameters, it means that they were part of the url
+            # but not placeholders. We need to add them back to the url.
+            params = urllib.urlencode(parameters)
+            if len(params) != 0:
+                qpos = url.find("?")
+                if (http_method == "GET") or parsedQuery is not None:
+                    if (qpos > 0):
+                        url += "&" + params
+                    else:
+                        url += "?" + params
+                
+                if (http_method == "GET"):
+                    params = None
+
         request = urllib2.Request(url, params, headers)
-        request.add_header('Content-Type', 'application/json')
         request.get_method = lambda: http_method
         try:
             responseValue = opener.open(request).read()

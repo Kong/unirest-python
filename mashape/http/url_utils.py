@@ -50,10 +50,12 @@ class UrlUtils:
         final_url = url
         keys = re.findall('\{([a-zA-Z0-9_\\.]*)\}', final_url)
         for key in keys:
+            replacement = ''
             if key in parameters:
-                final_url = re.sub("\{" + key + "\}&?",
-                        urllib.quote_plus(parameters[key]), final_url)
+                replacement = urllib.quote_plus(parameters[key])
                 parameters.pop(key)
+
+            final_url = re.sub("\{" + key + "\}&?", replacement, final_url)
         return final_url
 
     @staticmethod
