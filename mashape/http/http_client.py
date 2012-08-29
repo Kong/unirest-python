@@ -28,6 +28,7 @@ from urlparse import urlparse
 from mashape.auth.header_auth import HeaderAuth
 from mashape.auth.query_auth import QueryAuth
 from mashape.http.url_utils import UrlUtils
+from mashape.http.mashape_response import MashapeResponse 
 from mashape.http.multipart_post_handler import MultipartPostHandler
 from mashape.http.content_type import ContentType 
 from mashape.exception.client_exception import MashapeClientException
@@ -76,7 +77,7 @@ class HttpClient:
 
         if content_type is ContentType.MULTIPART:
             params = parameters
-            opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
+            opener = urllib2.build_opener(MultipartPostHandler)
         else:
             headers["Content-type"] = "application/x-www-form-urlencoded";
             opener = urllib2.build_opener(urllib2.HTTPHandler)
@@ -98,18 +99,13 @@ class HttpClient:
         request = urllib2.Request(url, params, headers)
         request.get_method = lambda: http_method
         try:
-            responseValue = opener.open(request).read()
+            response = opener.open(request)
         except urllib2.HTTPError, e:
             if e.getcode() == 500:
-                responseValue = e.read()
+                response = e
             else:
                 import sys
                 raise MashapeClientException("Error executing the request "
                     + str(sys.exc_info()[1]))
 
-        responseJson = None
-        if responseValue is not None and parse_json:
-            responseJson = json.loads(unicode(responseValue, errors='replace'))
-            return responseJson
-        else:
-            return responseValue
+        return MashapeResponse(response, parse_json)
