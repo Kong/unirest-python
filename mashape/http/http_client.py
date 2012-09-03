@@ -20,83 +20,61 @@
 # For any question or feedback please contact us at: support@mashape.com
 #
 
-import urllib
 import urllib2
-import json
 import threading
-from urlparse import urlparse
-from mashape.auth.header_auth import HeaderAuth
-from mashape.auth.query_auth import QueryAuth
+#from urlparse import urlparse
 from mashape.http.url_utils import UrlUtils
-from mashape.http.mashape_response import MashapeResponse 
-from mashape.http.multipart_post_handler import MultipartPostHandler
-from mashape.http.content_type import ContentType 
+from mashape.http.http_utils import HttpUtils
+from mashape.http.mashape_response import MashapeResponse
 from mashape.exception.client_exception import MashapeClientException
 
 
 class HttpClient:
-    def do_call(self, http_method, url, parameters, auth_handlers, content_type, callback=None, parse_json=True):
+    def do_call(self, http_method, url, parameters, auth_handlers,
+            content_type, callback=None, parse_json=True):
+
+        parameters = HttpUtils.clean_parameters(parameters)
 
         # for asynchronous calls
         if(callback is not None):
-            def thread_function(http_method, url, parameters, auth_handlers, content_type, parse_json):
-                result = self._do_call(http_method, url, parameters, auth_handlers, parse_json)
-                callback(result)
-            thread = threading.Thread(target=thread_function, args=(http_method, url, parameters, auth_handlers, content_type, parse_json))
-            thread.start()
-            return thread
+            return self._async_call(http_method, url, parameters,
+                    auth_handlers, content_type, parse_json)
         else:
-            return self._do_call(http_method, url, parameters, auth_handlers, content_type, parse_json)
+            return self._do_call(http_method, url, parameters,
+                    auth_handlers, content_type, parse_json)
 
-    def _do_call(self, http_method, url, parameters, auth_handlers, content_type, parse_json):
-        if parameters is None:
-            parameters = {}
-        else:
-            for key in parameters.keys():
-                if parameters[key] is None:
-                    parameters.pop(key)
+    def _async_call(self, http_method, url, parameters, auth_handlers,
+            content_type, callback, parse_json):
+        def thread_function(http_method, url, parameters, auth_handlers,
+                content_type, parse_json):
+            result = self._do_call(http_method, url, parameters, auth_handlers,
+                    parse_json)
+            callback(result)
+        thread = threading.Thread(target=thread_function, args=(http_method,
+            url, parameters, auth_handlers, content_type, parse_json))
+        thread.start()
+        return thread
 
-        headers = {}
+    def _do_call(self, http_method, url, parameters, auth_handlers,
+            content_type, parse_json):
+
+        headers, auth_params = HttpUtils.handle_authentication(auth_handlers)
+        parameters.update(auth_params)
         if parse_json:
             headers["Accept"] = "application/json"
 
         headers.update(UrlUtils.generate_client_headers())
 
-        for handler in auth_handlers:
-            if isinstance(handler, HeaderAuth):
-                headers.update(handler.handleHeader())
-            if isinstance(handler, QueryAuth):
-                parameters.update(handler.handleParams())
-
-        parsedQuery = urlparse(url).query
-        # get all the constant query parameters and add them to the parameters dict 
-        parameters.update(UrlUtils.get_query_string_parameters(parsedQuery))
-        # get rid of all the placeholder url parameters
-        url = UrlUtils.replace_base_url_parameters(url, parameters)
-
-
-        if content_type is ContentType.MULTIPART:
-            params = parameters
-            opener = urllib2.build_opener(MultipartPostHandler)
+        data = None
+        opener = HttpUtils.get_http_opener(content_type)
+        if (http_method == "GET"):
+            url = UrlUtils.build_url_with_query_string(url, parameters)
         else:
-            headers["Content-type"] = "application/x-www-form-urlencoded";
-            opener = urllib2.build_opener(urllib2.HTTPHandler)
+            data, additional_headers = HttpUtils.build_data_for_content_type(
+                    content_type, parameters, headers)
+            headers.update(additional_headers)
 
-            # If we still have parameters, it means that they were part of the url
-            # but not placeholders. We need to add them back to the url.
-            params = urllib.urlencode(parameters)
-            if len(params) != 0:
-                qpos = url.find("?")
-                if (http_method == "GET") or parsedQuery is not None:
-                    if (qpos > 0):
-                        url += "&" + params
-                    else:
-                        url += "?" + params
-                
-                if (http_method == "GET"):
-                    params = None
-
-        request = urllib2.Request(url, params, headers)
+        request = urllib2.Request(url, data, headers)
         request.get_method = lambda: http_method
         try:
             response = opener.open(request)

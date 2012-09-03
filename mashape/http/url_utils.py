@@ -59,5 +59,12 @@ class UrlUtils:
         return final_url
 
     @staticmethod
+    def build_url_with_query_string(url, parameters):
+        delim = "&" if ("?" in url) else "?"
+        if parameters:
+            url = url + delim + urllib.urlencode(parameters)
+        return url
+
+    @staticmethod
     def generate_client_headers():
         return {"User-Agent": "mashape-python/1.0"}
