@@ -64,6 +64,9 @@ class HttpUtils:
         headers = {}
         if content_type is ContentType.MULTIPART:
             data = parameters
+        elif content_type is ContentType.JSON:
+            headers["Content-type"] = "application/json"
+            data = parameters
         else:
             headers["Content-type"] = "application/x-www-form-urlencoded"
             data = urllib.urlencode(parameters)
