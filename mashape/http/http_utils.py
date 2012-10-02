@@ -23,6 +23,8 @@ import urllib
 import urllib2
 from mashape.auth.header_auth import HeaderAuth
 from mashape.auth.query_auth import QueryAuth
+from mashape.auth.oauth10a_auth import OAuth10aAuth
+from mashape.auth.oauth2_auth import OAuth2Auth
 from mashape.http.content_type import ContentType
 from mashape.http.multipart_post_handler import MultipartPostHandler
 
@@ -45,9 +47,13 @@ class HttpUtils:
         parameters = {}
         for handler in auth_handlers:
             if isinstance(handler, HeaderAuth):
-                headers.update(handler.handleHeader())
-            if isinstance(handler, QueryAuth):
-                parameters.update(handler.handleParams())
+                headers.update(handler.handle_headers())
+            elif isinstance(handler, QueryAuth):
+                parameters.update(handler.handle_params())
+            elif isinstance(handler, OAuth10aAuth):
+                headers.update(handler.handle_headers())
+            elif isinstance(handler, OAuth2Auth):
+                parameters.update(handler.handle_params())
 
         return headers, parameters
 

@@ -3,8 +3,8 @@ class Auth(object):
     header = {}
     params = {}
 
-    def handleHeader(self):
+    def handle_headers(self):
         return self.header
 
-    def handleParams(self):
+    def handle_params(self):
         return self.params

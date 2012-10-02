@@ -25,6 +25,17 @@ class ExceptionMessages(object):
     EXCEPTION_NOTSUPPORTED_HTTPMETHOD_CODE = 1003
     EXCEPTION_NOTSUPPORTED_HTTPMETHOD = "HTTP method not supported. Only \
             DELETE, GET, POST, PUT are supported"
+
+    EXCEPTION_OAUTH1_AUTHORIZE_CODE = 1007
+    EXCEPTION_OAUTH1_AUTHORIZE = "Before consuming an OAuth endpoint, you \
+            must invoke the authorize('access_token', 'access_secret') \
+            function with non-null values"
+
+    EXCEPTION_OAUTH2_AUTHORIZE_CODE = 1008
+    EXCEPTION_OAUTH2_AUTHORIZE = "Before consuming an OAuth endpoint, you \
+            must invoke the authorize('access_token') function with a \
+            non-null value"
+
     EXCEPTION_SYSTEM_ERROR_CODE = 2000
     EXCEPTION_EMPTY_REQUEST = "A request attempt was made to the component, \
             but the response was empty. The component's URL may be wrong or \
