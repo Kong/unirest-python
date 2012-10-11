@@ -5,10 +5,10 @@ from mashape.exception.exception_messages import ExceptionMessages
 
 class OAuth2Auth(OAuthAuth):
 
-    def __init__(self, consumer_key, consumer_secret, redirect_url):
+    def __init__(self, consumer_key, consumer_secret, callback_url):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.redirect_url = redirect_url
+        self.callback_url = callback_url
 
         self.headers["x-mashape-oauth-consumerkey"] = consumer_key
         self.headers["x-mashape-oauth-consumersecret"] = consumer_secret
