@@ -42,7 +42,7 @@ class HttpUtils:
         return parameters
 
     @staticmethod
-    def handle_authentication(auth_handlers):
+    def handle_authentication(auth_handlers, url):
         headers = {}
         parameters = {}
         for handler in auth_handlers:
@@ -51,7 +51,7 @@ class HttpUtils:
             elif isinstance(handler, QueryAuth):
                 parameters.update(handler.handle_params())
             elif isinstance(handler, OAuth10aAuth):
-                headers.update(handler.handle_headers())
+                headers.update(handler.handle_headers(url))
             elif isinstance(handler, OAuth2Auth):
                 parameters.update(handler.handle_params())
 

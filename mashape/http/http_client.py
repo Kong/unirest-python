@@ -58,7 +58,7 @@ class HttpClient:
     def _do_call(self, http_method, url, parameters, auth_handlers,
             content_type, parse_json):
 
-        headers, auth_params = HttpUtils.handle_authentication(auth_handlers)
+        headers, auth_params = HttpUtils.handle_authentication(auth_handlers, url)
         parameters.update(auth_params)
         if parse_json:
             headers["Accept"] = "application/json"

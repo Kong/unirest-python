@@ -9,11 +9,14 @@ class OAuth10aAuth(OAuthAuth):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.redirect_url = redirect_url
+        self.access_token = None
+        self.access_secret = None
 
-    def handle_headers(self):
-        if self.access_token is None or self.access_secret is None:
-            raise MashapeClientException(
-                    ExceptionMessages.EXCEPTION_OAUTH1_AUTHORIZE)
+    def handle_headers(self, url):
+        if not url.endswith("/oauth_url"):
+            if self.access_token is None or self.access_secret is None:
+                raise MashapeClientException(
+                        ExceptionMessages.EXCEPTION_OAUTH1_AUTHORIZE)
 
         headers = {}
         headers["x-mashape-oauth-consumerkey"] = self.consumer_key
