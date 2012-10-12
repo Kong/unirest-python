@@ -5,12 +5,12 @@ from mashape.exception.exception_messages import ExceptionMessages
 
 class OAuth10aAuth(OAuthAuth):
 
-    def __init__(self, consumer_key, consumer_secret, redirect_url):
+    def __init__(self, consumer_key, consumer_secret, callback_url):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.redirect_url = redirect_url
         self.access_token = None
         self.access_secret = None
+        self.callback_url = callback_url
 
     def handle_headers(self, url):
         if not url.endswith("/oauth_url"):
