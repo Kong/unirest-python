@@ -24,3 +24,7 @@ class OAuth10aAuth(OAuthAuth):
         headers["x-mashape-oauth-accesstoken"] = self.access_token
         headers["x-mashape-oauth-accesssecret"] = self.access_secret
         return headers
+
+    def handle_params(self, url):
+        return  {}
+

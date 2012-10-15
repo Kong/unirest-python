@@ -9,15 +9,19 @@ class OAuth2Auth(OAuthAuth):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.callback_url = callback_url
+        self.access_token = None
 
-        self.headers["x-mashape-oauth-consumerkey"] = consumer_key
-        self.headers["x-mashape-oauth-consumersecret"] = consumer_secret
-
-    def handle_params(self):
-        if self.access_token is None:
-            raise MashapeClientException(
-                    ExceptionMessages.EXCEPTION_OAUTH2_AUTHORIZE)
-
+    def handle_params(self, url):
         params = {}
-        params["accesstoken"] = self.accesstoken
+        
+        if url.endswith("/oauth_url"):
+            params["consumerKey"] =  self.consumer_key
+            params["consumerSecret"] = self.consumer_secret
+            params["callbackUrl"] = self.callback_url
+        else:
+            if self.access_token is None:
+                raise MashapeClientException(
+                        ExceptionMessages.EXCEPTION_OAUTH2_AUTHORIZE)
+
+            params["access_token"] = self.access_token
         return params
