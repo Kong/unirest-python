@@ -26,5 +26,9 @@ class OAuth10aAuth(OAuthAuth):
         return headers
 
     def handle_params(self, url):
-        return  {}
-
+        params = {}
+        if url.endswith("/oauth_url"):
+            params["consumerKey"] =  self.consumer_key
+            params["consumerSecret"] = self.consumer_secret
+            params["callbackUrl"] = self.callback_url
+        return params
