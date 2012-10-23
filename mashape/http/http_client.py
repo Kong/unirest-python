@@ -38,13 +38,13 @@ class HttpClient:
         # for asynchronous calls
         if(callback is not None):
             return self._async_call(http_method, url, parameters,
-                    auth_handlers, content_type, parse_json)
+                    auth_handlers, content_type, parse_json, callback)
         else:
             return self._do_call(http_method, url, parameters,
                     auth_handlers, content_type, parse_json)
 
     def _async_call(self, http_method, url, parameters, auth_handlers,
-            content_type, callback, parse_json):
+            content_type, parse_json, callback):
         def thread_function(http_method, url, parameters, auth_handlers,
                 content_type, parse_json):
             result = self._do_call(http_method, url, parameters, auth_handlers,
