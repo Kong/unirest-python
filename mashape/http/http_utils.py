@@ -21,6 +21,7 @@
 #
 import urllib
 import urllib2
+import json
 from mashape.auth.header_auth import HeaderAuth
 from mashape.auth.query_auth import QueryAuth
 from mashape.auth.oauth10a_auth import OAuth10aAuth
@@ -72,7 +73,7 @@ class HttpUtils:
             data = parameters
         elif content_type is ContentType.JSON:
             headers["Content-type"] = "application/json"
-            data = parameters
+            data = json.dumps(parameters['json_param_body'])
         else:
             headers["Content-type"] = "application/x-www-form-urlencoded"
             data = urllib.urlencode(parameters)
