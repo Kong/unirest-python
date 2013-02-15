@@ -1,6 +1,10 @@
 import urllib
 import base64
 import json
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+
+USER_AGENT = "mashape-python/3.0"
 
 _httplib = None
 try:
@@ -13,12 +17,21 @@ if not _httplib:
     import urllib2
     _httplib = "urllib2"
 
+# Register the streaming http handlers
+register_openers()
+
 def request(method, url, params = {}, headers ={}):
-    data = encode(params)
+    # Lowercase header keys
+    headers = dict((k.lower(), v) for k, v in headers.iteritems())
+    headers["user-agent"] = USER_AGENT
+    
+    data, post_headers = encode(params)
+    if post_headers is not None:
+        headers = dict(headers.items() + post_headers.items())
+
     if _httplib == "urlfetch":
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
-     #   return json.loads(res.content)
-        return res.content
+        return MashapeResponse(res.status_code, response.headers, response.content)
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
@@ -27,9 +40,7 @@ def request(method, url, params = {}, headers ={}):
         except urllib2.HTTPError, e:
             response = e
 
-        mashapeResponse = MashapeResponse(response.code, response.headers, response.read())
-        return mashapeResponse
-        #return json.loads(response_html)
+        return MashapeResponse(response.code, response.headers, response.read())
 
 # The following methods in the Mashape class are based on Stripe's python bindings
 # which are under the MIT license. See https://github.com/stripe/stripe-python
@@ -37,8 +48,9 @@ def encode_dict(stk, key, dictvalue):
     n = {}
     for k, v in dictvalue.iteritems():
         k = _utf8(k)
-        v = _utf8(v)
-        n["%s[%s]" % (key, k)] = v
+        if type(v) is not file:
+            v = _utf8(v)
+            n["%s[%s]" % (key, k)] = v
     stk.extend(_encode_inner(n))
 
 def _encode_inner(d):
@@ -75,7 +87,13 @@ def encode(d):
     """
     Internal: encode a string for url representation
     """
-    return urllib.urlencode(_encode_inner(d))
+    for key, value in d.iteritems():
+        if type(value) is file:
+            # It it contains a file it's multipart/data
+            return multipart_encode(d);
+    
+    # Otherwise just regularly encode it
+    return urllib.urlencode(_encode_inner(d)), None
 
 # End of Stripe methods.
 
