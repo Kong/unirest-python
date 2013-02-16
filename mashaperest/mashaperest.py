@@ -2,7 +2,7 @@ from __init__ import request
 import threading
 
 def get(url, headers = {}, callback = None):
-    return __dorequest("GET", url, params, headers, callback)
+    return __dorequest("GET", url, {}, headers, callback)
     
 def post(url, params = {}, headers = {}, callback = None):
     return __dorequest("POST", url, params, headers, callback)

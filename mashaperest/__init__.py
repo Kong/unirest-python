@@ -1,6 +1,7 @@
 import urllib
 import base64
 import json
+import threading
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 

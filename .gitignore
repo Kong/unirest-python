@@ -3,4 +3,5 @@
 *.pyc
 .DS_Store
 dist
-
+MANIFEST
+*.pyc
