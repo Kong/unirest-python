@@ -4,6 +4,7 @@ import json
 import threading
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
+import threading
 
 USER_AGENT = "mashape-python/3.0"
 
@@ -21,12 +22,12 @@ if not _httplib:
 # Register the streaming http handlers
 register_openers()
 
-def request(method, url, params = {}, headers ={}, callback = None):
+def __request(method, url, params = {}, headers ={}, callback = None):
     # Lowercase header keys
     headers = dict((k.lower(), v) for k, v in headers.iteritems())
     headers["user-agent"] = USER_AGENT
     
-    data, post_headers = encode(params)
+    data, post_headers = __encode(params)
     if post_headers is not None:
         headers = dict(headers.items() + post_headers.items())
     _mashapeResponse = None
@@ -50,16 +51,16 @@ def request(method, url, params = {}, headers ={}, callback = None):
 
 # The following methods in the Mashape class are based on Stripe's python bindings
 # which are under the MIT license. See https://github.com/stripe/stripe-python
-def encode_dict(stk, key, dictvalue):
+def __encode_dict(stk, key, dictvalue):
     n = {}
     for k, v in dictvalue.iteritems():
         k = _utf8(k)
         if type(v) is not file:
-            v = _utf8(v)
+            v = __utf8(v)
             n["%s[%s]" % (key, k)] = v
-    stk.extend(_encode_inner(n))
+    stk.extend(__encode_inner(n))
 
-def _encode_inner(d):
+def __encode_inner(d):
     """
     We want post vars of form:
     {'foo': 'bar', 'nested': {'a': 'b', 'c': 'd'}}
@@ -68,28 +69,28 @@ def _encode_inner(d):
     """
     # special case value encoding
     ENCODERS = {
-        dict: encode_dict
+        dict: __encode_dict
     }
 
     stk = []
     for key, value in d.iteritems():
-        key = _utf8(key)
+        key = __utf8(key)
         try:
             encoder = ENCODERS[value.__class__]
             encoder(stk, key, value)
         except KeyError:
             # don't need special encoding
-            value = _utf8(value)
+            value = __utf8(value)
             stk.append((key, value))
     return stk
 
-def _utf8(value):
+def __utf8(value):
     if isinstance(value, unicode):
         return value.encode('utf-8')
     else:
         return value
 
-def encode(d):
+def __encode(d):
     """
     Internal: encode a string for url representation
     """
@@ -99,9 +100,30 @@ def encode(d):
             return multipart_encode(d);
     
     # Otherwise just regularly encode it
-    return urllib.urlencode(_encode_inner(d)), None
+    return urllib.urlencode(__encode_inner(d)), None
 
 # End of Stripe methods.
+
+def get(url, headers = {}, callback = None):
+    return __dorequest("GET", url, {}, headers, callback)
+    
+def post(url, params = {}, headers = {}, callback = None):
+    return __dorequest("POST", url, params, headers, callback)
+    
+def put(url, params = {}, headers = {}, callback = None):
+    return __dorequest("PUT", url, params, headers, callback)
+    
+def delete(url, params = {}, headers = {}, callback = None):
+    return __dorequest("DELETE", url, params, headers, callback)
+    
+def patch(url, params = {}, headers = {}, callback = None):
+    return __dorequest("PATCH", url, params, headers, callback)
+    
+def __dorequest(method, url, params, headers, callback = None):
+    if callback is None:
+        return __request(method, url, params, headers)
+    else:
+        return threading.Thread(target=__request, args=(method, url, params, headers, callback)).start()
 
 class MashapeResponse(object):
     def __init__(self, code, headers, body):
