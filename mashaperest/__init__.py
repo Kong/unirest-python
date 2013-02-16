@@ -20,7 +20,7 @@ if not _httplib:
 # Register the streaming http handlers
 register_openers()
 
-def request(method, url, params = {}, headers ={}):
+def request(method, url, params = {}, headers ={}, callback = None):
     # Lowercase header keys
     headers = dict((k.lower(), v) for k, v in headers.iteritems())
     headers["user-agent"] = USER_AGENT
@@ -28,10 +28,10 @@ def request(method, url, params = {}, headers ={}):
     data, post_headers = encode(params)
     if post_headers is not None:
         headers = dict(headers.items() + post_headers.items())
-
+    _mashapeResponse = None
     if _httplib == "urlfetch":
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
-        return MashapeResponse(res.status_code, response.headers, response.content)
+        _mashapeResponse = MashapeResponse(res.status_code, response.headers, response.content)
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
@@ -40,7 +40,12 @@ def request(method, url, params = {}, headers ={}):
         except urllib2.HTTPError, e:
             response = e
 
-        return MashapeResponse(response.code, response.headers, response.read())
+        _mashapeResponse = MashapeResponse(response.code, response.headers, response.read())
+        
+    if callback is None:
+        return _mashapeResponse
+    else:
+        callback(_mashapeResponse)
 
 # The following methods in the Mashape class are based on Stripe's python bindings
 # which are under the MIT license. See https://github.com/stripe/stripe-python
