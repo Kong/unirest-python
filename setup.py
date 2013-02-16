@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='MashapeRest',
-    version='3.0.5',
+    version='3.0.6',
     author='Mashape Inc.',
     author_email='support@mashape.com',
     packages=['mashaperest'],
