@@ -2,4 +2,4 @@
 Mashape REST
 ============
 
-Mashape REST HTTP client for consuming JSON and Binary APIs.
+Mashape REST HTTP client.
