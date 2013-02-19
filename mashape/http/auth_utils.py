@@ -7,8 +7,6 @@ import base64
 class AuthUtils:
 
     @staticmethod
-    def generate_authentication_header(public_key, private_key):
-        digest_maker = hmac.new(private_key, public_key, hashlib.sha1)
-        auth_hash = digest_maker.hexdigest()
+    def generate_authentication_header(mashape_key):
         return {"X-Mashape-Authorization":
-                base64.b64encode(public_key + ":" + auth_hash)}
+                mashape_key}
