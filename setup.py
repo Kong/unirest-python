@@ -13,5 +13,5 @@ setup(name='mashape-client-lib',
       author='Mashape Inc.',
       author_email='support@mashape.com',
       url='https://github.com/Mashape/mashape-python-client-library/',
-      packages=['mashape'],
+      packages = ['mashape', 'mashape.auth', 'mashape.config','mashape.exception','mashape.http'],
      )
