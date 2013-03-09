@@ -1,14 +1,14 @@
 from distutils.core import setup
 
 setup(
-    name='MashapeRest',
-    version='3.0.6',
+    name='Unicorn',
+    version='1.0.0',
     author='Mashape Inc.',
     author_email='support@mashape.com',
-    packages=['mashaperest'],
-    url='http://pypi.python.org/pypi/MashapeRest/',
+    packages=['unicorn'],
+    url='http://pypi.python.org/pypi/Unicorn/',
     license='LICENSE.txt',
-    description='Mashape Rest HTTP client library',
+    description='Unicorn, the lightweight HTTP library',
     long_description=open('README.txt').read(),
     install_requires=[
         "poster >= 0.8.1"
