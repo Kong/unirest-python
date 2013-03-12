@@ -94,36 +94,41 @@ def __encode(d):
     """
     Internal: encode a string for url representation
     """
-    for key, value in d.iteritems():
-        if type(value) is file:
-            # It it contains a file it's multipart/data
-            return multipart_encode(d);
+    if type(d) is list:
+        for key, value in d.iteritems():
+            if type(value) is file:
+                # It it contains a file it's multipart/data
+                return multipart_encode(d);
     
-    # Otherwise just regularly encode it
-    return urllib.urlencode(__encode_inner(d)), None
+        # Otherwise just regularly encode it
+        return urllib.urlencode(__encode_inner(d)), None
+    else:
+        return d, None
 
 # End of Stripe methods.
 
 def get(url, headers = {}, callback = None):
     return __dorequest("GET", url, {}, headers, callback)
     
-def post(url, params = {}, headers = {}, callback = None):
+def post(url, headers = {}, params = {}, callback = None):
     return __dorequest("POST", url, params, headers, callback)
     
-def put(url, params = {}, headers = {}, callback = None):
+def put(url, headers = {}, params = {}, callback = None):
     return __dorequest("PUT", url, params, headers, callback)
     
-def delete(url, params = {}, headers = {}, callback = None):
-    return __dorequest("DELETE", url, params, headers, callback)
+def delete(url, headers = {}, callback = None):
+    return __dorequest("DELETE", url, {}, headers, callback)
     
-def patch(url, params = {}, headers = {}, callback = None):
+def patch(url, headers = {}, params = {}, callback = None):
     return __dorequest("PATCH", url, params, headers, callback)
     
 def __dorequest(method, url, params, headers, callback = None):
     if callback is None:
         return __request(method, url, params, headers)
     else:
-        return threading.Thread(target=__request, args=(method, url, params, headers, callback)).start()
+        thread = threading.Thread(target=__request, args=(method, url, params, headers, callback))
+        thread.start()
+        return thread
 
 class UnicornResponse(object):
     def __init__(self, code, headers, body):
