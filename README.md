@@ -21,17 +21,8 @@ So you're probably wondering how using Unicorn makes creating requests in Python
 
     response = unicorn.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" })
 
-Python also has support for asynchronous requests in which you can define a `callback` to be passed along and invoked when Unicorn recieves the response:
-
-   def callback(response):
-      response.code
-      response.headers
-      response.body
-      response.raw_body
-
-    response = unicorn.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
-
 ### Asynchronous Requests
+Python also has support for asynchronous requests in which you can define a `callback` to be passed along and invoked when Unicorn recieves the response.
 For non-blocking requests in Python we need to define ourselves a callback to reference inside of our request method upon response:
 
     def callback(response):
@@ -61,6 +52,40 @@ Transferring file data requires that you `open` the file in a readable `r` mode:
         "foo": "bar"
       })
     )
+    
+### Request Reference
+    unicorn.get(url, headers = {}, callback = None)
+    unicorn.post(url, headers = {}, params = {}, callback = None)
+    unicorn.put(url, headers = {}, params = {}, callback = None)
+    unicorn.patch(url, headers = {}, params = {}, callback = None)    
+    unicorn.delete(url, headers = {}, callback = None)
+
+`url`
+Endpoint, address, or uri to be acted upon and requested information from.
+
+`headers`
+Request Headers as associative array or object
+
+`body`
+Request Body associative array or object
+
+`callback`
+Asychronous callback method to be invoked upon result.
+
+### Response Reference
+Upon recieving a response Unicorn returns the result in the form of an Object, this object should always have the same keys for each language regarding to the response details.
+
+`code`
+HTTP Response Status Code (Example 200)
+
+`headers`
+HTTP Response Headers
+
+`body`
+Parsed response body where applicable, for example JSON responses are parsed to Objects / Associative Arrays.
+
+`raw_body`
+Un-parsed response body
 
 License
 ---------------
