@@ -31,7 +31,7 @@ from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import threading
 
-USER_AGENT = "unicorn-python/1.0"
+USER_AGENT = "unirest-python/1.0"
 
 _httplib = None
 try:
@@ -55,10 +55,10 @@ def __request(method, url, params = {}, headers ={}, callback = None):
     data, post_headers = __encode(params)
     if post_headers is not None:
         headers = dict(headers.items() + post_headers.items())
-    _unicornResponse = None
+    _unirestResponse = None
     if _httplib == "urlfetch":
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
-        _unicornResponse = UnicornResponse(res.status_code, response.headers, response.content)
+        _unirestResponse = UnirestResponse(res.status_code, response.headers, response.content)
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
@@ -67,12 +67,12 @@ def __request(method, url, params = {}, headers ={}, callback = None):
         except urllib2.HTTPError, e:
             response = e
 
-        _unicornResponse = UnicornResponse(response.code, response.headers, response.read())
+        _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
         
     if callback is None:
-        return _unicornResponse
+        return _unirestResponse
     else:
-        callback(_unicornResponse)
+        callback(_unirestResponse)
 
 # The following methods in the Mashape class are based on Stripe's python bindings
 # which are under the MIT license. See https://github.com/stripe/stripe-python
@@ -155,7 +155,7 @@ def __dorequest(method, url, params, headers, callback = None):
         thread.start()
         return thread
 
-class UnicornResponse(object):
+class UnirestResponse(object):
     def __init__(self, code, headers, body):
         self._code = code
         self._headers = headers
