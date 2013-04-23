@@ -1,29 +1,29 @@
-Unicorn-Python
+Unirest-Python
 ============================================
 
-Unicorn is a set of lightweight HTTP libraries available in PHP, Ruby, Python, Java, Objective-C.
+Unirest is a set of lightweight HTTP libraries available in PHP, Ruby, Python, Java, Objective-C.
 
 Documentation
 -------------------
 
 ### Installing
-To utilize unicorn, install the unicorn pip:
+To utilize unirest, install the unirest pip:
 
-`pip install unicorn`
+`pip install unirest`
 
 After installing the pip package you can now begin to simplifying requests by import:
 
-`import unicorn`
+`import unirest`
 
 ### Creating Request
-So you're probably wondering how using Unicorn makes creating requests in Python easier, let's start with a working example:
+So you're probably wondering how using Unirest makes creating requests in Python easier, let's start with a working example:
 
 ```python
-response = unicorn.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" })
+response = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" })
 ```
 
 ### Asynchronous Requests
-Python also has support for asynchronous requests in which you can define a `callback` to be passed along and invoked when Unicorn recieves the response.
+Python also has support for asynchronous requests in which you can define a `callback` to be passed along and invoked when Unirest recieves the response.
 For non-blocking requests in Python we need to define ourselves a callback to reference inside of our request method upon response:
 
 ```python
@@ -33,14 +33,14 @@ def callback(response):
   response.body # The parsed response
   response.raw_body # The unparsed response
   
-  thread = unicorn.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
+  thread = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
 ```
 
 ### File Uploads
 Transferring file data requires that you `open` the file in a readable `r` mode:
 
 ```python
-response = unicorn.post("http://httpbin.org/post", {"Accept": "application/json"},
+response = unirest.post("http://httpbin.org/post", {"Accept": "application/json"},
   {
     "parameter": "value",
     "file": open("/tmp/file", mode="r")
@@ -53,7 +53,7 @@ response = unicorn.post("http://httpbin.org/post", {"Accept": "application/json"
 ```python
 import json
 
-response = unicorn.post("http://httpbin.org/post", { "Accept": "application/json" },
+response = unirest.post("http://httpbin.org/post", { "Accept": "application/json" },
   json.dumps({
     "parameter": "value",
     "foo": "bar"
@@ -64,11 +64,11 @@ response = unicorn.post("http://httpbin.org/post", { "Accept": "application/json
 ### Request Reference
 
 ```python
-unicorn.get(url, headers = {}, callback = None)
-unicorn.post(url, headers = {}, params = {}, callback = None)
-unicorn.put(url, headers = {}, params = {}, callback = None)
-unicorn.patch(url, headers = {}, params = {}, callback = None)    
-unicorn.delete(url, headers = {}, callback = None)
+unirest.get(url, headers = {}, callback = None)
+unirest.post(url, headers = {}, params = {}, callback = None)
+unirest.put(url, headers = {}, params = {}, callback = None)
+unirest.patch(url, headers = {}, params = {}, callback = None)    
+unirest.delete(url, headers = {}, callback = None)
 ```
 
 `url`
@@ -84,7 +84,7 @@ Request Body associative array or object
 Asychronous callback method to be invoked upon result.
 
 ### Response Reference
-Upon recieving a response Unicorn returns the result in the form of an Object, this object should always have the same keys for each language regarding to the response details.
+Upon recieving a response Unirest returns the result in the form of an Object, this object should always have the same keys for each language regarding to the response details.
 
 `code`
 HTTP Response Status Code (Example 200)
