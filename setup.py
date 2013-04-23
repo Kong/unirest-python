@@ -9,7 +9,7 @@ setup(
     author='Mashape Inc.',
     author_email='support@mashape.com',
     packages=['unirest'],
-    url='http://pypi.python.org/pypi/unirest/',
+    url='http://pypi.python.org/pypi/Unirest/',
     license='LICENSE.txt',
     description='Unirest, the lightweight HTTP library',
     install_requires=[
