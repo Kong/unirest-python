@@ -1,4 +1,7 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 setup(
     name='Unirest',
@@ -6,10 +9,10 @@ setup(
     author='Mashape Inc.',
     author_email='support@mashape.com',
     packages=['unirest'],
-    url='http://unirest.io',
+    url='http://pypi.python.org/pypi/unirest/',
     license='LICENSE.txt',
     description='Unirest, the lightweight HTTP library',
     install_requires=[
         "poster >= 0.8.1"
-    ],
+    ]
 )
