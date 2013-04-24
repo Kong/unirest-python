@@ -119,7 +119,7 @@ def __encode(d):
     """
     Internal: encode a string for url representation
     """
-    if type(d) is list:
+    if type(d) is dict:
         for key, value in d.iteritems():
             if type(value) is file:
                 # It it contains a file it's multipart/data
