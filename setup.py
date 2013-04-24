@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name='Unirest',
-    version='1.0.3',
+    version='1.0.4',
     author='Mashape Inc.',
     author_email='support@mashape.com',
     packages=['unirest'],
