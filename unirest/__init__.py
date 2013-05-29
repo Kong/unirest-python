@@ -79,7 +79,7 @@ def __request(method, url, params = {}, headers ={}, callback = None):
 def __encode_dict(stk, key, dictvalue):
     n = {}
     for k, v in dictvalue.iteritems():
-        k = _utf8(k)
+        k = __utf8(k)
         if type(v) is not file:
             v = __utf8(v)
             n["%s[%s]" % (key, k)] = v
