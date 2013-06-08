@@ -25,11 +25,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import urllib
 import base64
-import json
 import threading
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import threading
+
+try: 
+	import json
+except ImportError: 
+	import simplejson as json
 
 USER_AGENT = "unirest-python/1.0"
 
