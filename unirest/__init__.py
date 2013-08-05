@@ -73,7 +73,7 @@ def __request(method, url, params = {}, headers ={}, callback = None):
 
         _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
         
-    if callback is None:
+    if callback is None or callback == {}:
         return _unirestResponse
     else:
         callback(_unirestResponse)
