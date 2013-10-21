@@ -2,10 +2,7 @@
 
 Unirest is a set of lightweight HTTP libraries in multiple languages.
 
-Documentation
--------------------
-
-### Installing
+## Installing
 To utilize unirest, install the unirest pip:
 
 `pip install unirest`
@@ -21,7 +18,7 @@ So you're probably wondering how using Unirest makes creating requests in Python
 response = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" })
 ```
 
-### Asynchronous Requests
+## Asynchronous Requests
 Python also has support for asynchronous requests in which you can define a `callback` to be passed along and invoked when Unirest recieves the response.
 For non-blocking requests in Python we need to define ourselves a callback to reference inside of our request method upon response:
 
@@ -35,7 +32,7 @@ def callback(response):
   thread = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
 ```
 
-### File Uploads
+## File Uploads
 Transferring file data requires that you `open` the file in a readable `r` mode:
 
 ```python
@@ -47,7 +44,7 @@ response = unirest.post("http://httpbin.org/post", {"Accept": "application/json"
 )
 ```
 
-### Custom Entity Body
+## Custom Entity Body
 
 ```python
 import json
@@ -60,7 +57,7 @@ response = unirest.post("http://httpbin.org/post", { "Accept": "application/json
 )
 ```
     
-### Request Reference
+# Request
 
 ```python
 unirest.get(url, headers = {}, callback = None)
@@ -75,7 +72,7 @@ unirest.delete(url, headers = {}, callback = None)
 - `body` - Request Body associative array or object
 - `callback` - Asychronous callback method to be invoked upon result.
 
-### Response Reference
+# Response
 Upon recieving a response Unirest returns the result in the form of an Object, this object should always have the same keys for each language regarding to the response details.
 
 - `code` - HTTP Response Status Code (Example 200)
