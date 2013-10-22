@@ -3,15 +3,15 @@
 Unirest is a set of lightweight HTTP libraries in multiple languages.
 
 ## Installing
-To utilize unirest, install the unirest pip:
+To utilize unirest, install it using pip:
 
 `pip install unirest`
 
-After installing the pip package you can now begin to simplifying requests by import:
+After installing the pip package, you can now begin simplifying requests by importing unirest:
 
 `import unirest`
 
-### Creating Request
+### Creating Requests
 So you're probably wondering how using Unirest makes creating requests in Python easier, let's start with a working example:
 
 ```python
@@ -73,7 +73,7 @@ unirest.delete(url, headers = {}, callback = None)
 - `callback` - Asychronous callback method to be invoked upon result.
 
 # Response
-Upon recieving a response Unirest returns the result in the form of an Object, this object should always have the same keys for each language regarding to the response details.
+Upon receiving a response, Unirest returns the result in the form of an Object. This object should always have the same keys for each language regarding to the response details.
 
 - `code` - HTTP Response Status Code (Example 200)
 - `headers`- HTTP Response Headers
