@@ -29,7 +29,7 @@ def callback(response):
   response.body # The parsed response
   response.raw_body # The unparsed response
   
-  thread = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
+thread = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
 ```
 
 ## File Uploads
