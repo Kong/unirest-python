@@ -2,6 +2,10 @@
 
 Unirest is a set of lightweight HTTP libraries in multiple languages.
 
+Created with love by http://mashape.com
+
+
+
 ## Installing
 To utilize unirest, install it using pip:
 
