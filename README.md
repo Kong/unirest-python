@@ -34,6 +34,7 @@ def callback_function(response):
   response.raw_body # The unparsed response
   
 thread = unirest.post("http://httpbin.org/post", headers={ "Accept": "application/json" }, params={ "parameter": 23, "foo": "bar" }, callback=callback_function)
+```
 
 ## File Uploads
 Transferring file data requires that you `open` the file in a readable `r` mode:
