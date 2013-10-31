@@ -5,11 +5,11 @@ except ImportError:
 
 setup(
     name='Unirest',
-    version='1.0.6',
+    version='1.1.0',
     author='Mashape Inc.',
     author_email='support@mashape.com',
     packages=['unirest'],
-    url='http://pypi.python.org/pypi/Unirest/',
+    url='https://github.com/Mashape/unirest-python',
     license='LICENSE.txt',
     description='Unirest, the lightweight HTTP library',
     install_requires=[

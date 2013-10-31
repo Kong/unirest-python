@@ -19,7 +19,7 @@ After installing the pip package you can now begin to simplifying requests by im
 So you're probably wondering how using Unirest makes creating requests in Python easier, let's start with a working example:
 
 ```python
-response = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" })
+response = unirest.post("http://httpbin.org/post", headers={ "Accept": "application/json" }, params={ "parameter": 23, "foo": "bar" })
 ```
 
 ### Asynchronous Requests
@@ -27,21 +27,21 @@ Python also has support for asynchronous requests in which you can define a `cal
 For non-blocking requests in Python we need to define ourselves a callback to reference inside of our request method upon response:
 
 ```python
-def callback(response):
+def callback_function(response):
   response.code # The HTTP status code
   response.headers # The HTTP headers
   response.body # The parsed response
   response.raw_body # The unparsed response
   
-  thread = unirest.post("http://httpbin.org/post", { "Accept": "application/json" }, { "parameter": 23, "foo": "bar" }, callback)
+  thread = unirest.post("http://httpbin.org/post", headers={ "Accept": "application/json" }, params={ "parameter": 23, "foo": "bar" }, callback=callback_function)
 ```
 
 ### File Uploads
 Transferring file data requires that you `open` the file in a readable `r` mode:
 
 ```python
-response = unirest.post("http://httpbin.org/post", {"Accept": "application/json"},
-  {
+response = unirest.post("http://httpbin.org/post", headers={"Accept": "application/json"},
+  params={
     "parameter": "value",
     "file": open("/tmp/file", mode="r")
   }
@@ -53,22 +53,32 @@ response = unirest.post("http://httpbin.org/post", {"Accept": "application/json"
 ```python
 import json
 
-response = unirest.post("http://httpbin.org/post", { "Accept": "application/json" },
-  json.dumps({
+response = unirest.post("http://httpbin.org/post", headers={ "Accept": "application/json" },
+  params=json.dumps({
     "parameter": "value",
     "foo": "bar"
   })
 )
 ```
+
+**Note**: For the sake of semplicity, even with custom entities in the body, the keyword argument is still `params` (instead of `data` for example). I'm looking for feedback on this.
+
+### Basic Authentication
+
+Authenticating the request with basic authentication can be done by providing an `auth` array like:
+
+```python
+response = unirest.get("http://httpbin.org/get", auth=('username', 'password'))
+```
     
 ### Request Reference
 
 ```python
-unirest.get(url, headers = {}, callback = None)
-unirest.post(url, headers = {}, params = {}, callback = None)
-unirest.put(url, headers = {}, params = {}, callback = None)
-unirest.patch(url, headers = {}, params = {}, callback = None)    
-unirest.delete(url, headers = {}, callback = None)
+unirest.get(url, headers = {}, params = {}, auth = (), callback = None)
+unirest.post(url, headers = {}, params = {}, auth = (), callback = None)
+unirest.put(url, headers = {}, params = {}, auth = (), callback = None)
+unirest.patch(url, headers = {}, params = {}, auth = (), callback = None)    
+unirest.delete(url, headers = {}, params = {}, auth = (), callback = None)
 ```
 
 `url`

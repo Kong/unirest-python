@@ -26,6 +26,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import urllib
 import base64
 import threading
+import gzip
+from StringIO import StringIO
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import threading
@@ -35,7 +37,7 @@ try:
 except ImportError: 
 	import simplejson as json
 
-USER_AGENT = "unirest-python/1.0"
+USER_AGENT = "unirest-python/1.1"
 
 _httplib = None
 try:
@@ -51,7 +53,7 @@ if not _httplib:
 # Register the streaming http handlers
 register_openers()
 
-def __request(method, url, params = {}, headers ={}, callback = None):
+def __request(method, url, params = {}, headers ={}, auth = None, callback = None):
     # Lowercase header keys
     headers = dict((k.lower(), v) for k, v in headers.iteritems())
     headers["user-agent"] = USER_AGENT
@@ -59,6 +61,15 @@ def __request(method, url, params = {}, headers ={}, callback = None):
     data, post_headers = __encode(params)
     if post_headers is not None:
         headers = dict(headers.items() + post_headers.items())
+
+    headers['Accept-encoding'] = 'gzip'
+
+    if auth is not None:
+        if len(auth) == 2:
+            user = auth[0]
+            password = auth[1]
+            headers['Authorization'] = "Basic " + base64.b64encode(user + ":" + password)
+
     _unirestResponse = None
     if _httplib == "urlfetch":
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
@@ -136,24 +147,37 @@ def __encode(d):
 
 # End of Stripe methods.
 
-def get(url, headers = {}, callback = None):
-    return __dorequest("GET", url, {}, headers, callback)
+HEADERS_KEY = "headers";
+CALLBACK_KEY = "callback";
+PARAMS_KEY = "params";
+AUTH_KEY = "auth";
+
+def get(url, **kwargs):
+    params = kwargs.get(PARAMS_KEY, {})
+    if len(params) > 0:
+        if url.find("?") == -1:
+            url += "?"
+        else:
+            url += "&"
+        url += urllib.urlencode(params)
+
+    return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
-def post(url, headers = {}, params = {}, callback = None):
-    return __dorequest("POST", url, params, headers, callback)
+def post(url, **kwargs):
+    return __dorequest("POST", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
-def put(url, headers = {}, params = {}, callback = None):
-    return __dorequest("PUT", url, params, headers, callback)
+def put(url, **kwargs):
+    return __dorequest("PUT", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
-def delete(url, headers = {}, callback = None):
-    return __dorequest("DELETE", url, {}, headers, callback)
+def delete(url, **kwargs):
+    return __dorequest("DELETE", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
-def patch(url, headers = {}, params = {}, callback = None):
-    return __dorequest("PATCH", url, params, headers, callback)
+def patch(url, **kwargs):
+    return __dorequest("PATCH", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
-def __dorequest(method, url, params, headers, callback = None):
+def __dorequest(method, url, params, headers, auth, callback = None):
     if callback is None:
-        return __request(method, url, params, headers)
+        return __request(method, url, params, headers, auth)
     else:
         thread = threading.Thread(target=__request, args=(method, url, params, headers, callback))
         thread.start()
@@ -163,8 +187,15 @@ class UnirestResponse(object):
     def __init__(self, code, headers, body):
         self._code = code
         self._headers = headers
+        
+        if headers.get("Content-Encoding") == 'gzip':
+            buf = StringIO(body)
+            f = gzip.GzipFile(fileobj=buf)
+            body = f.read()
+
         self._raw_body = body
         self._body = self._raw_body;
+
         try:
             self._body = json.loads(self._raw_body)
         except ValueError:
