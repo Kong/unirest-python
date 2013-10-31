@@ -81,9 +81,10 @@ unirest.patch(url, headers = {}, params = {}, auth = (), callback = None)
 unirest.delete(url, headers = {}, params = {}, auth = (), callback = None)
 ```
 
-- `url` - Endpoint, address, or uri to be acted upon and requested information from.
-- `headers` - Request Headers as associative array or object
-- `body` - Request Body associative array or object
+- `url` - Endpoint, address, or URI to be acted upon and requested information from in a string format.
+- `headers` - Request Headers as an associative array
+- `params` - Request Body as an associative array or object
+- `auth` - The Basic Authentication credentials as an array
 - `callback` - Asychronous callback method to be invoked upon result.
 
 # Response
