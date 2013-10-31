@@ -94,3 +94,23 @@ Upon receiving a response, Unirest returns the result in the form of an Object. 
 - `headers`- HTTP Response Headers
 - `body`- Parsed response body where applicable, for example JSON responses are parsed to Objects / Associative Arrays.
 - `raw_body`- Un-parsed response body
+
+# Advanced Configuration
+
+You can set some advanced configuration to tune Unirest-Python:
+
+### Default Request Headers
+
+You can set default headers that will be sent on every request:
+
+```python
+unirest.default_header('Header1','Value1')
+unirest.default_header('Header2','Value2')
+```
+
+You can clear the default headers anytime with:
+
+```python
+unirest.clear_default_headers()
+```
+

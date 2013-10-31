@@ -53,9 +53,28 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertTrue(response.body['gzipped'])
 
 	def test_basicauth(self):
-		response = unirest.get('http://httpbin.org/gzip', auth=('marco', 'password'))
+		response = unirest.get('http://httpbin.org/get', auth=('marco', 'password'))
 		self.assertEqual(response.code, 200)
 		self.assertEqual(response.body['headers']['Authorization'], "Basic bWFyY286cGFzc3dvcmQ=")
+
+	def test_defaultheaders(self):
+		unirest.default_header('custom','custom header')
+		response = unirest.get('http://httpbin.org/get')
+		self.assertEqual(response.code, 200)
+		self.assertTrue('Custom' in response.body['headers']);
+		self.assertEqual(response.body['headers']['Custom'], "custom header")
+
+		# Make another request
+		response = unirest.get('http://httpbin.org/get')
+		self.assertEqual(response.code, 200)
+		self.assertTrue('Custom' in response.body['headers']);
+		self.assertTrue(response.body['headers']['Custom'], "custom header")
+
+		# Clear the default headers
+		unirest.clear_default_headers()
+		response = unirest.get('http://httpbin.org/get')
+		self.assertEqual(response.code, 200)
+		self.assertFalse('Custom' in response.body['headers']);
 
 if __name__ == '__main__':
 	unittest.main()

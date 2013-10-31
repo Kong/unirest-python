@@ -39,6 +39,8 @@ except ImportError:
 
 USER_AGENT = "unirest-python/1.1"
 
+_defaultheaders = {};
+
 _httplib = None
 try:
     from google.appengine.api import urlfetch
@@ -69,6 +71,8 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
             user = auth[0]
             password = auth[1]
             headers['Authorization'] = "Basic " + base64.b64encode(user + ":" + password)
+
+    headers = dict(headers.items() + _defaultheaders.items())
 
     _unirestResponse = None
     if _httplib == "urlfetch":
@@ -174,6 +178,12 @@ def delete(url, **kwargs):
     
 def patch(url, **kwargs):
     return __dorequest("PATCH", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+
+def default_header(name, value):
+    _defaultheaders[name] = value
+
+def clear_default_headers():
+    _defaultheaders.clear()
     
 def __dorequest(method, url, params, headers, auth, callback = None):
     if callback is None:
