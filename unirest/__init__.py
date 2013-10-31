@@ -39,7 +39,8 @@ except ImportError:
 
 USER_AGENT = "unirest-python/1.1"
 
-_defaultheaders = {};
+_defaultheaders = {}
+_timeout = 10
 
 _httplib = None
 try:
@@ -82,7 +83,8 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
         try:
-            response = urllib2.urlopen(req)
+            print "Timeout is " + str(_timeout) + "s"
+            response = urllib2.urlopen(req, timeout=_timeout)
         except urllib2.HTTPError, e:
             response = e
 
@@ -185,6 +187,10 @@ def default_header(name, value):
 def clear_default_headers():
     _defaultheaders.clear()
     
+def timeout(seconds):
+    global _timeout
+    _timeout = seconds
+
 def __dorequest(method, url, params, headers, auth, callback = None):
     if callback is None:
         return __request(method, url, params, headers, auth)

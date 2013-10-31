@@ -99,6 +99,14 @@ Upon receiving a response, Unirest returns the result in the form of an Object. 
 
 You can set some advanced configuration to tune Unirest-Python:
 
+### Timeout
+
+You can set a custom timeout value (in seconds):
+
+```python
+unirest.timeout(5) # 5s timeout
+```
+
 ### Default Request Headers
 
 You can set default headers that will be sent on every request:

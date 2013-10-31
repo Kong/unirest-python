@@ -76,5 +76,17 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(response.code, 200)
 		self.assertFalse('Custom' in response.body['headers']);
 
+	def test_timeout(self):
+		unirest.timeout(3)
+		response = unirest.get('http://httpbin.org/delay/1')
+		self.assertEqual(response.code, 200)
+
+		unirest.timeout(1)
+		try:
+			response = unirest.get('http://httpbin.org/delay/3')
+			self.fail("The timeout didn't work")
+		except:
+    	        	pass
+
 if __name__ == '__main__':
 	unittest.main()
