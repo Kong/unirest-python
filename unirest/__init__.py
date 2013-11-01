@@ -37,7 +37,7 @@ try:
 except ImportError: 
 	import simplejson as json
 
-USER_AGENT = "unirest-python/1.1"
+USER_AGENT = "unirest-python/1.1" 
 
 _defaultheaders = {}
 _timeout = 10
