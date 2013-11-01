@@ -1,4 +1,4 @@
-# Unirest for Python
+# Unirest for Python [![Build Status](https://api.travis-ci.org/Mashape/unirest-python.png)](https://travis-ci.org/Mashape/unirest-python)
 
 Unirest is a set of lightweight HTTP libraries available in multiple languages, ideal for most applications:
 
