@@ -83,7 +83,6 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
         try:
-            print "Timeout is " + str(_timeout) + "s"
             response = urllib2.urlopen(req, timeout=_timeout)
         except urllib2.HTTPError, e:
             response = e
