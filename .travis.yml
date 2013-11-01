@@ -1,3 +1,4 @@
 language: python
+install: "pip install unirest"
 script:
   - python unirest/test/test_unirest.py
