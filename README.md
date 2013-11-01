@@ -13,10 +13,8 @@ Unirest is a set of lightweight HTTP libraries available in multiple languages, 
 
 Created with love by [thefosk](https://github.com/thefosk) @ [mashape.com](https://mashape.com)
 
-
-
 ## Installing
-To utilize unirest, install it using pip:
+To utilize Unirest, install it using pip:
 
 `pip install unirest`
 
@@ -25,15 +23,21 @@ After installing the pip package, you can now begin simplifying requests by impo
 `import unirest`
 
 ### Creating Requests
+
 So you're probably wondering how using Unirest makes creating requests in Python easier, let's start with a working example:
 
 ```python
 response = unirest.post("http://httpbin.org/post", headers={ "Accept": "application/json" }, params={ "parameter": 23, "foo": "bar" })
+
+response.code # The HTTP status code
+response.headers # The HTTP headers
+response.body # The parsed response
+response.raw_body # The unparsed response
 ```
 
 ## Asynchronous Requests
-Python also has support for asynchronous requests in which you can define a `callback` to be passed along and invoked when Unirest recieves the response.
-For non-blocking requests in Python we need to define ourselves a callback to reference inside of our request method upon response:
+
+Python also supports asynchronous requests in which you can define a `callback` function to be passed along and invoked when Unirest receives the response:
 
 ```python
 def callback_function(response):
@@ -46,6 +50,7 @@ thread = unirest.post("http://httpbin.org/post", headers={ "Accept": "applicatio
 ```
 
 ## File Uploads
+
 Transferring file data requires that you `open` the file in a readable `r` mode:
 
 ```python
