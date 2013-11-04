@@ -13,6 +13,14 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(response.body['args']['name'], "Mark")
 		self.assertEqual(response.body['args']['nick'], "thefosk")
 
+	def test_get_none_param(self):
+		response = unirest.get('http://httpbin.org/get?name=Mark', params={"nick":"thefosk", "age":None, "third":""})
+		self.assertEqual(response.code, 200)
+		self.assertEqual(len(response.body['args']), 3)
+		self.assertEqual(response.body['args']['name'], "Mark")
+		self.assertEqual(response.body['args']['nick'], "thefosk")
+		self.assertEqual(response.body['args']['third'], "")
+
 	def test_post(self):
 		response = unirest.post('http://httpbin.org/post', params={"name":"Mark", "nick":"thefosk"})
 		self.assertEqual(response.code, 200)
