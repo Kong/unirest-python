@@ -14,7 +14,7 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(response.body['args']['nick'], "thefosk")
 
 	def test_get_none_param(self):
-		response = unirest.get('http://httpbin.org/get?name=Mark', params={"nick":"thefosk", "age":None, "third":""})
+		response = unirest.get('http://httpbin.org/get?name=Mark', params={"nick":"thefosk", "age": None, "third":""})
 		self.assertEqual(response.code, 200)
 		self.assertEqual(len(response.body['args']), 3)
 		self.assertEqual(response.body['args']['name'], "Mark")
@@ -28,6 +28,15 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(len(response.body['form']), 2)
 		self.assertEqual(response.body['form']['name'], "Mark")
 		self.assertEqual(response.body['form']['nick'], "thefosk")
+
+	def test_post_none_param(self):
+		response = unirest.post('http://httpbin.org/post', params={"name":"Mark", "nick":"thefosk", "age": None, "third":""})
+		self.assertEqual(response.code, 200)
+		self.assertEqual(len(response.body['args']), 0)
+		self.assertEqual(len(response.body['form']), 3)
+		self.assertEqual(response.body['form']['name'], "Mark")
+		self.assertEqual(response.body['form']['nick'], "thefosk")
+		self.assertEqual(response.body['form']['third'], "")
 
 	def test_delete(self):
 		response = unirest.delete('http://httpbin.org/delete', params={"name":"Mark", "nick":"thefosk"})

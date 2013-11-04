@@ -157,28 +157,34 @@ CALLBACK_KEY = "callback";
 PARAMS_KEY = "params";
 AUTH_KEY = "auth";
 
-def get(url, **kwargs):
+def get_parameters(kwargs):
     params = kwargs.get(PARAMS_KEY, {})
+    if params is not None and type(params) is dict:
+        return dict((k, v) for k, v in params.iteritems() if v is not None)
+    return params
+
+def get(url, **kwargs):
+    params = get_parameters(kwargs)
     if len(params) > 0:
         if url.find("?") == -1:
             url += "?"
         else:
             url += "&"
         url += urllib.urlencode(dict((k, v) for k, v in params.iteritems() if v is not None)) # Removing None values
-        
+
     return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
 def post(url, **kwargs):
-    return __dorequest("POST", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("POST", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
 def put(url, **kwargs):
-    return __dorequest("PUT", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("PUT", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
 def delete(url, **kwargs):
-    return __dorequest("DELETE", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("DELETE", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
 def patch(url, **kwargs):
-    return __dorequest("PATCH", url, kwargs.get(PARAMS_KEY, {}), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("PATCH", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
 def default_header(name, value):
     _defaultheaders[name] = value
