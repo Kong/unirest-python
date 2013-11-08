@@ -170,7 +170,7 @@ def get(url, **kwargs):
             url += "?"
         else:
             url += "&"
-        url += urllib.urlencode(dict((k, v) for k, v in params.iteritems() if v is not None)) # Removing None values
+        url += urllib.urlencode(__encode_inner(dict((k, v) for k, v in params.iteritems() if v is not None))) # Removing None values/encode unicode objects
 
     return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
     
