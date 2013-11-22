@@ -37,7 +37,7 @@ try:
 except ImportError: 
 	import simplejson as json
 
-USER_AGENT = "unirest-python/1.1"
+USER_AGENT = "unirest-python/1.2"
 
 _defaultheaders = {}
 _timeout = 10
@@ -200,7 +200,7 @@ def __dorequest(method, url, params, headers, auth, callback = None):
     if callback is None:
         return __request(method, url, params, headers, auth)
     else:
-        thread = threading.Thread(target=__request, args=(method, url, params, headers, callback))
+        thread = threading.Thread(target=__request, args=(method, url, params, headers, auth, callback))
         thread.start()
         return thread
 
