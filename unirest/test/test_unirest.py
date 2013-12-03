@@ -15,13 +15,12 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(response.body['args']['name'], "Mark")
 		self.assertEqual(response.body['args']['nick'], "thefosk")
 
-
-        def test_get_unicode_param(self):
-                response = unirest.get('http://httpbin.org/get?name=Shimada', params={"nick":u"しまりん"})
-                self.assertEqual(response.code, 200)
-                self.assertEqual(len(response.body['args']), 2)
-                self.assertEqual(response.body['args']['name'], "Shimada")
-                self.assertEqual(response.body['args']['nick'], u"しまりん")
+	def test_get_unicode_param(self):
+		response = unirest.get('http://httpbin.org/get?name=Shimada', params={"nick":u"しまりん"})
+		self.assertEqual(response.code, 200)
+		self.assertEqual(len(response.body['args']), 2)
+		self.assertEqual(response.body['args']['name'], "Shimada")
+		self.assertEqual(response.body['args']['nick'], u"しまりん")
 
 	def test_get_none_param(self):
 		response = unirest.get('http://httpbin.org/get?name=Mark', params={"nick":"thefosk", "age": None, "third":""})
@@ -113,7 +112,7 @@ class UnirestTestCase(unittest.TestCase):
 			response = unirest.get('http://httpbin.org/delay/3')
 			self.fail("The timeout didn't work")
 		except:
-    	        	pass
+								pass
 
 if __name__ == '__main__':
 	unittest.main()

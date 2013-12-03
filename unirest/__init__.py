@@ -37,7 +37,7 @@ try:
 except ImportError: 
 	import simplejson as json
 
-USER_AGENT = "unirest-python/1.1.5"
+USER_AGENT = "unirest-python/1.1.6"
 
 _defaultheaders = {}
 _timeout = 10
@@ -57,6 +57,13 @@ if not _httplib:
 register_openers()
 
 def __request(method, url, params = {}, headers ={}, auth = None, callback = None):
+
+    # Encode URL
+    url_parts = url.split("\\?")
+    url = url_parts[0].replace(" ", "%20")
+    if len(url_parts) == 2:
+        url += "?" + url_parts[1]
+
     # Lowercase header keys
     headers = dict((k.lower(), v) for k, v in headers.iteritems())
     headers["user-agent"] = USER_AGENT
