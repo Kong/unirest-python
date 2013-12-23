@@ -30,12 +30,11 @@ import gzip
 from StringIO import StringIO
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
-import threading
 
-try: 
-	import json
-except ImportError: 
-	import simplejson as json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 USER_AGENT = "unirest-python/1.1.6"
 
@@ -56,7 +55,8 @@ if not _httplib:
 # Register the streaming http handlers
 register_openers()
 
-def __request(method, url, params = {}, headers ={}, auth = None, callback = None):
+
+def __request(method, url, params={}, headers={}, auth=None, callback=None):
 
     # Encode URL
     url_parts = url.split("\\?")
@@ -67,7 +67,7 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
     # Lowercase header keys
     headers = dict((k.lower(), v) for k, v in headers.iteritems())
     headers["user-agent"] = USER_AGENT
-    
+
     data, post_headers = __encode(params)
     if post_headers is not None:
         headers = dict(headers.items() + post_headers.items())
@@ -85,7 +85,7 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
     _unirestResponse = None
     if _httplib == "urlfetch":
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
-        _unirestResponse = UnirestResponse(res.status_code, response.headers, response.content)
+        _unirestResponse = UnirestResponse(res.status_code, res.headers, res.content)
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
@@ -95,7 +95,7 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
             response = e
 
         _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
-        
+
     if callback is None or callback == {}:
         return _unirestResponse
     else:
@@ -103,6 +103,8 @@ def __request(method, url, params = {}, headers ={}, auth = None, callback = Non
 
 # The following methods in the Mashape class are based on Stripe's python bindings
 # which are under the MIT license. See https://github.com/stripe/stripe-python
+
+
 def __encode_dict(stk, key, dictvalue):
     n = {}
     for k, v in dictvalue.iteritems():
@@ -111,6 +113,7 @@ def __encode_dict(stk, key, dictvalue):
             v = __utf8(v)
             n["%s[%s]" % (key, k)] = v
     stk.extend(__encode_inner(n))
+
 
 def __encode_inner(d):
     """
@@ -136,11 +139,13 @@ def __encode_inner(d):
             stk.append((key, value))
     return stk
 
+
 def __utf8(value):
     if isinstance(value, unicode):
         return value.encode('utf-8')
     else:
         return value
+
 
 def __encode(d):
     """
@@ -150,8 +155,8 @@ def __encode(d):
         for key, value in d.iteritems():
             if type(value) is file:
                 # It it contains a file it's multipart/data
-                return multipart_encode(d);
-    
+                return multipart_encode(d)
+
         # Otherwise just regularly encode it
         return urllib.urlencode(__encode_inner(d)), None
     else:
@@ -159,16 +164,18 @@ def __encode(d):
 
 # End of Stripe methods.
 
-HEADERS_KEY = "headers";
-CALLBACK_KEY = "callback";
-PARAMS_KEY = "params";
-AUTH_KEY = "auth";
+HEADERS_KEY = 'headers'
+CALLBACK_KEY = 'callback'
+PARAMS_KEY = 'params'
+AUTH_KEY = 'auth'
+
 
 def get_parameters(kwargs):
     params = kwargs.get(PARAMS_KEY, {})
     if params is not None and type(params) is dict:
         return dict((k, v) for k, v in params.iteritems() if v is not None)
     return params
+
 
 def get(url, **kwargs):
     params = get_parameters(kwargs)
@@ -180,30 +187,38 @@ def get(url, **kwargs):
         url += urllib.urlencode(__encode_inner(dict((k, v) for k, v in params.iteritems() if v is not None))) # Removing None values/encode unicode objects
 
     return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
-    
+
+
 def post(url, **kwargs):
     return __dorequest("POST", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
-    
+
+
 def put(url, **kwargs):
     return __dorequest("PUT", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
-    
+
+
 def delete(url, **kwargs):
     return __dorequest("DELETE", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
-    
+
+
 def patch(url, **kwargs):
     return __dorequest("PATCH", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+
 
 def default_header(name, value):
     _defaultheaders[name] = value
 
+
 def clear_default_headers():
     _defaultheaders.clear()
-    
+
+
 def timeout(seconds):
     global _timeout
     _timeout = seconds
 
-def __dorequest(method, url, params, headers, auth, callback = None):
+
+def __dorequest(method, url, params, headers, auth, callback=None):
     if callback is None:
         return __request(method, url, params, headers, auth)
     else:
@@ -211,33 +226,34 @@ def __dorequest(method, url, params, headers, auth, callback = None):
         thread.start()
         return thread
 
+
 class UnirestResponse(object):
     def __init__(self, code, headers, body):
         self._code = code
         self._headers = headers
-        
+
         if headers.get("Content-Encoding") == 'gzip':
             buf = StringIO(body)
             f = gzip.GzipFile(fileobj=buf)
             body = f.read()
 
         self._raw_body = body
-        self._body = self._raw_body;
+        self._body = self._raw_body
 
         try:
             self._body = json.loads(self._raw_body)
         except ValueError:
-             #Do nothing
-             pass
-       
+            #Do nothing
+            pass
+
     @property
     def code(self):
         return self._code
-        
+
     @property
     def body(self):
         return self._body
-        
+
     @property
     def raw_body(self):
         return self._raw_body
