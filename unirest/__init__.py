@@ -78,14 +78,17 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
         if len(auth) == 2:
             user = auth[0]
             password = auth[1]
-            headers['Authorization'] = "Basic " + base64.b64encode(user + ":" + password)
+            encoded_string = base64.b64encode(user + ':' + password)
+            headers['Authorization'] = "Basic " + encoded_string
 
     headers = dict(headers.items() + _defaultheaders.items())
 
     _unirestResponse = None
     if _httplib == "urlfetch":
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
-        _unirestResponse = UnirestResponse(res.status_code, res.headers, res.content)
+        _unirestResponse = UnirestResponse(res.status_code,
+                                           res.headers,
+                                           res.content)
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
@@ -94,15 +97,18 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
         except urllib2.HTTPError, e:
             response = e
 
-        _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
+        _unirestResponse = UnirestResponse(response.code,
+                                           response.headers,
+                                           response.read())
 
     if callback is None or callback == {}:
         return _unirestResponse
     else:
         callback(_unirestResponse)
 
-# The following methods in the Mashape class are based on Stripe's python bindings
-# which are under the MIT license. See https://github.com/stripe/stripe-python
+# The following methods in the Mashape class are based on
+# Stripe's python bindings which are under the MIT license.
+# See https://github.com/stripe/stripe-python
 
 
 def __encode_dict(stk, key, dictvalue):
@@ -222,7 +228,13 @@ def __dorequest(method, url, params, headers, auth, callback=None):
     if callback is None:
         return __request(method, url, params, headers, auth)
     else:
-        thread = threading.Thread(target=__request, args=(method, url, params, headers, auth, callback))
+        thread = threading.Thread(target=__request,
+                                  args=(method,
+                                        url,
+                                        params,
+                                        headers,
+                                        auth,
+                                        callback))
         thread.start()
         return thread
 
