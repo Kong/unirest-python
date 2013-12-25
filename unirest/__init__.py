@@ -27,8 +27,9 @@ import urllib
 import base64
 import threading
 import gzip
+import utils
+
 from StringIO import StringIO
-from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 
 try:
@@ -68,7 +69,7 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
     headers = dict((k.lower(), v) for k, v in headers.iteritems())
     headers["user-agent"] = USER_AGENT
 
-    data, post_headers = __encode(params)
+    data, post_headers = utils.urlencode(params)
     if post_headers is not None:
         headers = dict(headers.items() + post_headers.items())
 
@@ -111,62 +112,6 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
 # See https://github.com/stripe/stripe-python
 
 
-def __encode_dict(stk, key, dictvalue):
-    n = {}
-    for k, v in dictvalue.iteritems():
-        k = __utf8(k)
-        if type(v) is not file:
-            v = __utf8(v)
-            n["%s[%s]" % (key, k)] = v
-    stk.extend(__encode_inner(n))
-
-
-def __encode_inner(d):
-    """
-    We want post vars of form:
-    {'foo': 'bar', 'nested': {'a': 'b', 'c': 'd'}}
-    to become:
-    foo=bar&nested[a]=b&nested[c]=d
-    """
-    # special case value encoding
-    ENCODERS = {
-        dict: __encode_dict
-    }
-
-    stk = []
-    for key, value in d.iteritems():
-        key = __utf8(key)
-        try:
-            encoder = ENCODERS[value.__class__]
-            encoder(stk, key, value)
-        except KeyError:
-            # don't need special encoding
-            value = __utf8(value)
-            stk.append((key, value))
-    return stk
-
-
-def __utf8(value):
-    if isinstance(value, unicode):
-        return value.encode('utf-8')
-    else:
-        return value
-
-
-def __encode(d):
-    """
-    Internal: encode a string for url representation
-    """
-    if type(d) is dict:
-        for key, value in d.iteritems():
-            if type(value) is file:
-                # It it contains a file it's multipart/data
-                return multipart_encode(d)
-
-        # Otherwise just regularly encode it
-        return urllib.urlencode(__encode_inner(d)), None
-    else:
-        return d, None
 
 # End of Stripe methods.
 
@@ -190,7 +135,7 @@ def get(url, **kwargs):
             url += "?"
         else:
             url += "&"
-        url += urllib.urlencode(__encode_inner(dict((k, v) for k, v in params.iteritems() if v is not None))) # Removing None values/encode unicode objects
+        url += utils.dict2query(dict((k, v) for k, v in params.iteritems() if v is not None))  # Removing None values/encode unicode objects
 
     return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
