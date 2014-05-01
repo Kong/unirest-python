@@ -16,11 +16,15 @@ Created with love by [thefosk](https://github.com/thefosk) @ [mashape.com](https
 ## Installing
 To utilize Unirest, install it using pip:
 
-`pip install unirest`
+```bash
+$ pip install unirest
+```
 
 After installing the pip package, you can now begin simplifying requests by importing unirest:
 
-`import unirest`
+```bash
+import unirest
+```
 
 ### Creating Requests
 
