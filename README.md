@@ -22,7 +22,7 @@ $ pip install unirest
 
 After installing the pip package, you can now begin simplifying requests by importing unirest:
 
-```bash
+```python
 import unirest
 ```
 
