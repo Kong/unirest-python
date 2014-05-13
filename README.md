@@ -139,4 +139,3 @@ You can clear the default headers anytime with:
 ```python
 unirest.clear_default_headers()
 ```
-
