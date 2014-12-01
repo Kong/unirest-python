@@ -86,7 +86,7 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
 
     _unirestResponse = None
     if _httplib == "urlfetch":
-        res = urlfetch.fetch(url, payload=data, headers=headers, method=method)
+        res = urlfetch.fetch(url, payload=data, headers=headers, method=method, deadline=_timeout)
         _unirestResponse = UnirestResponse(res.status_code,
                                            res.headers,
                                            res.content)
