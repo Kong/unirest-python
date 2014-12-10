@@ -69,7 +69,7 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(response.body['form']['nick'], "thefosk")
 
 	def test_post_entity(self):
-		response = unirest.post('http://httpbin.org/post', params="hello this is custom data")
+		response = unirest.post('http://httpbin.org/post', headers={'Content-Type':'text/plain'}, params="hello this is custom data")
 		self.assertEqual(response.code, 200)
 		self.assertEqual(response.body['data'], "hello this is custom data")
 
