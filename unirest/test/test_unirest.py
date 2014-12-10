@@ -50,7 +50,8 @@ class UnirestTestCase(unittest.TestCase):
 	def test_delete(self):
 		response = unirest.delete('http://httpbin.org/delete', params={"name":"Mark", "nick":"thefosk"})
 		self.assertEqual(response.code, 200)
-		self.assertEqual(response.body['data'], "nick=thefosk&name=Mark")
+		self.assertEqual(response.body['form']['name'], "Mark")
+                self.assertEqual(response.body['form']['nick'], "thefosk")
 
 	def test_put(self):
 		response = unirest.put('http://httpbin.org/put', params={"name":"Mark", "nick":"thefosk"})
