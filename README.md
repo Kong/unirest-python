@@ -1,4 +1,9 @@
-# Unirest for Python [![Build Status](https://api.travis-ci.org/Mashape/unirest-python.png)](https://travis-ci.org/Mashape/unirest-python)
+# Unirest for Python [![Build Status][travis-image]][travis-url] [![version][pypi-version]][pypi-url]
+
+[![License][pypi-license]][license-url]
+[![Downloads][pypi-downloads]][pypi-url]
+[![Dependencies][versioneye-image]][versioneye-url]
+[![Gitter][gitter-image]][gitter-url]
 
 Unirest is a set of lightweight HTTP libraries available in multiple languages, ideal for most applications:
 
@@ -10,8 +15,6 @@ Unirest is a set of lightweight HTTP libraries available in multiple languages, 
 * Customizable timeout
 * Customizable default headers for every request (DRY)
 * Automatic JSON parsing into a native object for JSON responses
-
-Created with love by [thefosk](https://github.com/thefosk) @ [mashape.com](https://mashape.com)
 
 ## Installing
 To utilize Unirest, install it using pip:
@@ -139,3 +142,28 @@ You can clear the default headers anytime with:
 ```python
 unirest.clear_default_headers()
 ```
+
+----
+
+Made with &#9829; from the [Mashape](https://www.mashape.com/) team
+
+[license-url]: https://github.com/Mashape/unirest-python/blob/master/LICENSE
+
+[gitter-url]: https://gitter.im/Mashape/unirest-python
+[gitter-image]: https://img.shields.io/badge/Gitter-Join%20Chat-blue.svg?style=flat-square
+
+[travis-url]: https://travis-ci.org/Mashape/unirest-python
+[travis-image]: https://img.shields.io/travis/Mashape/unirest-python.svg?style=flat-square
+
+[pypi-url]: https://pypi.python.org/pypi/Unirest/
+[pypi-license]: https://img.shields.io/pypi/l/Unirest.svg?style=flat-square
+[pypi-version]: https://img.shields.io/pypi/v/Unirest.svg?style=flat-square
+[pypi-downloads]: https://img.shields.io/pypi/dm/Unirest.svg?style=flat-square
+
+[codeclimate-url]: https://codeclimate.com/github/Mashape/unirest-python
+[codeclimate-quality]: https://img.shields.io/codeclimate/github/Mashape/unirest-python.svg?style=flat-square
+[codeclimate-coverage]: https://img.shields.io/codeclimate/coverage/github/Mashape/unirest-python.svg?style=flat-square
+
+[versioneye-url]: https://www.versioneye.com/user/projects/54b82a8905064657eb00024e
+[versioneye-image]: https://img.shields.io/versioneye/d/user/projects/54b82a8905064657eb00024e.svg?style=flat-square
+
