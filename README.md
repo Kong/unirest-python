@@ -1,5 +1,7 @@
 # Unirest for Python [![Build Status](https://api.travis-ci.org/Mashape/unirest-python.png)](https://travis-ci.org/Mashape/unirest-python)
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Mashape/unirest-python?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Unirest is a set of lightweight HTTP libraries available in multiple languages, ideal for most applications:
 
 * Make `GET`, `POST`, `PUT`, `PATCH`, `DELETE` requests
