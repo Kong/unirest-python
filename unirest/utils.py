@@ -53,5 +53,5 @@ def urlencode(data):
 
 
 if __name__ == '__main__':
-    print '...'
-    print dict2query({'foo': 'bar', 'nested': {'a': 'b', 'c': 'd'}})
+    print('...')
+    print(dict2query({'foo': 'bar', 'nested': {'a': 'b', 'c': 'd'}}))
