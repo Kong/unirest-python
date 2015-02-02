@@ -1,9 +1,10 @@
 from poster.encode import multipart_encode
-
+import urllib
 
 def to_utf8(value):
     if isinstance(value, unicode):
-        return value.encode('utf-8')
+        return urllib.quote_plus(value.encode('utf-8'))
+
     return value
 
 
