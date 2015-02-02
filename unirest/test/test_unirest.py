@@ -50,7 +50,8 @@ class UnirestTestCase(unittest.TestCase):
 	def test_delete(self):
 		response = unirest.delete('http://httpbin.org/delete', params={"name":"Mark", "nick":"thefosk"})
 		self.assertEqual(response.code, 200)
-		self.assertEqual(response.body['data'], "nick=thefosk&name=Mark")
+		self.assertEqual(response.body['form']['name'], "Mark")
+                self.assertEqual(response.body['form']['nick'], "thefosk")
 
 	def test_put(self):
 		response = unirest.put('http://httpbin.org/put', params={"name":"Mark", "nick":"thefosk"})
@@ -69,7 +70,7 @@ class UnirestTestCase(unittest.TestCase):
 		self.assertEqual(response.body['form']['nick'], "thefosk")
 
 	def test_post_entity(self):
-		response = unirest.post('http://httpbin.org/post', params="hello this is custom data")
+		response = unirest.post('http://httpbin.org/post', headers={'Content-Type':'text/plain'}, params="hello this is custom data")
 		self.assertEqual(response.code, 200)
 		self.assertEqual(response.body['data'], "hello this is custom data")
 
