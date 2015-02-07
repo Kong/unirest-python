@@ -45,14 +45,12 @@ _timeout = 10
 _httplib = None
 try:
     from google.appengine.api import urlfetch
-
     _httplib = 'urlfetch'
 except ImportError:
     pass
 
 if not _httplib:
     import urllib2
-
     _httplib = "urllib2"
 
 # Register the streaming http handlers
@@ -60,6 +58,7 @@ register_openers()
 
 
 def __request(method, url, params={}, headers={}, auth=None, callback=None):
+
     # Encode URL
     url_parts = url.split("\\?")
     url = url_parts[0].replace(" ", "%20")
@@ -139,28 +138,23 @@ def get(url, **kwargs):
         url += utils.dict2query(
             dict((k, v) for k, v in params.iteritems() if v is not None))  # Removing None values/encode unicode objects
 
-    return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None),
-                       kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
 
 def post(url, **kwargs):
-    return __dorequest("POST", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None),
-                       kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("POST", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
 
 def put(url, **kwargs):
-    return __dorequest("PUT", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None),
-                       kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("PUT", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
 
 def delete(url, **kwargs):
-    return __dorequest("DELETE", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None),
-                       kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("DELETE", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
 
 def patch(url, **kwargs):
-    return __dorequest("PATCH", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None),
-                       kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("PATCH", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
 
 def default_header(name, value):
