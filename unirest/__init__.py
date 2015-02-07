@@ -102,10 +102,10 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
         except urllib2.URLError, e:
             _unirestResponse = UnirestResponse(0, {}, str(e.reason))
 
-        if callback is None or callback == {}:
-            return _unirestResponse
-        else:
-            callback(_unirestResponse)
+    if callback is None or callback == {}:
+        return _unirestResponse
+    else:
+        callback(_unirestResponse)
 
 # The following methods in the Mashape class are based on
 # Stripe's python bindings which are under the MIT license.
@@ -135,8 +135,7 @@ def get(url, **kwargs):
             url += "?"
         else:
             url += "&"
-        url += utils.dict2query(
-            dict((k, v) for k, v in params.iteritems() if v is not None))  # Removing None values/encode unicode objects
+        url += utils.dict2query(dict((k, v) for k, v in params.iteritems() if v is not None))  # Removing None values/encode unicode objects
 
     return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
 
