@@ -5,7 +5,11 @@
 [![Dependencies][versioneye-image]][versioneye-url]
 [![Gitter][gitter-image]][gitter-url]
 
-Unirest is a set of lightweight HTTP libraries available in [multiple languages](http://unirest.io), built and maintained by the [Mashape team](https://github.com/Mashape).
+![][unirest-logo]
+
+
+[Unirest](http://unirest.io) is a set of lightweight HTTP libraries available in multiple languages, built and maintained by [Mashape](https://github.com/Mashape), who also maintain the open-source API Gateway [Kong](https://github.com/Mashape/kong). 
+
 
 ## Features
 
@@ -148,6 +152,9 @@ unirest.clear_default_headers()
 ----
 
 Made with &#9829; from the [Mashape](https://www.mashape.com/) team
+
+[unirest-logo]: http://cl.ly/image/2P373Y090s2O/Image%202015-10-12%20at%209.48.06%20PM.png
+
 
 [license-url]: https://github.com/Mashape/unirest-python/blob/master/LICENSE
 
