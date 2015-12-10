@@ -4,12 +4,12 @@ except ImportError:
     from distutils.core import setup
 
 setup(
-    name='Unirest',
-    version='1.1.7',
+    name='UnirestModified',
+    version='1.1.8',
     author='Mashape',
     author_email='opensource@mashape.com',
-    packages=['unirest'],
-    url='https://github.com/Mashape/unirest-python',
+    packages=['unirestmodified'],
+    url='https://github.com/codyrice/unirest-python.git',
     license='LICENSE',
     description='Simplified, lightweight HTTP client library',
     install_requires=[
