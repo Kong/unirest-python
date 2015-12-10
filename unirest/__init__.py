@@ -99,6 +99,7 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
             response = e
 
         _unirestResponse = UnirestResponse(response.code,
+                                           response.url,
                                            response.headers,
                                            response.read())
 
@@ -185,8 +186,9 @@ def __dorequest(method, url, params, headers, auth, callback=None):
 
 
 class UnirestResponse(object):
-    def __init__(self, code, headers, body):
+    def __init__(self, code, url, headers, body):
         self._code = code
+        self._url = url
         self._headers = headers
 
         if headers.get("Content-Encoding") == 'gzip':
@@ -206,6 +208,10 @@ class UnirestResponse(object):
     @property
     def code(self):
         return self._code
+
+    @property
+    def url(self):
+        return self._url
 
     @property
     def body(self):
