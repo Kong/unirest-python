@@ -9,7 +9,7 @@ setup(
     author='Mashape',
     author_email='opensource@mashape.com',
     packages=['unirestmodified'],
-    url='https://github.com/Mashape/unirest-python',
+    url='https://github.com/codyrice/unirest-python.git',
     license='LICENSE',
     description='Simplified, lightweight HTTP client library',
     install_requires=[
