@@ -27,7 +27,7 @@ import urllib
 import base64
 import threading
 import gzip
-import utils
+from . import utils
 
 from StringIO import StringIO
 from poster.streaminghttp import register_openers
