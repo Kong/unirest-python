@@ -93,14 +93,15 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
+
         try:
             response = urllib2.urlopen(req, timeout=_timeout)
+            _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
         except urllib2.HTTPError, e:
             response = e
-
-        _unirestResponse = UnirestResponse(response.code,
-                                           response.headers,
-                                           response.read())
+            _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
+        except urllib2.URLError, e:
+            _unirestResponse = UnirestResponse(0, {}, str(e.reason))
 
     if callback is None or callback == {}:
         return _unirestResponse
@@ -200,7 +201,7 @@ class UnirestResponse(object):
         try:
             self._body = json.loads(self._raw_body)
         except ValueError:
-            #Do nothing
+            # Do nothing
             pass
 
     @property
