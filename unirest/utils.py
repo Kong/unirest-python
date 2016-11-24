@@ -49,7 +49,7 @@ def urlencode(data):
                 return multipart_encode(data)
         return dict2query(data), None
     else:
-        return data, None
+        return data, None   
 
 
 if __name__ == '__main__':
