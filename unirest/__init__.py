@@ -57,7 +57,7 @@ if not _httplib:
 register_openers()
 
 
-def __request(method, url, params={}, headers={}, auth=None, callback=None):
+def __request(method, url, params={}, headers={}, auth=None, callback=None, extra_data=None):
 
     # Encode URL
     url_parts = url.split("\\?")
@@ -89,17 +89,27 @@ def __request(method, url, params={}, headers={}, auth=None, callback=None):
         res = urlfetch.fetch(url, payload=data, headers=headers, method=method, deadline=_timeout)
         _unirestResponse = UnirestResponse(res.status_code,
                                            res.headers,
-                                           res.content)
+                                           res.content,
+                                           url,
+                                           extra_data)
     else:
         req = urllib2.Request(url, data, headers)
         req.get_method = lambda: method
 
         try:
             response = urllib2.urlopen(req, timeout=_timeout)
-            _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
+            _unirestResponse = UnirestResponse(response.code,
+                                               response.headers,
+                                               response.read(),
+                                               url,
+                                               extra_data)
         except urllib2.HTTPError, e:
             response = e
-            _unirestResponse = UnirestResponse(response.code, response.headers, response.read())
+            _unirestResponse = UnirestResponse(response.code,
+                                               response.headers,
+                                               response.read(),
+                                               url,
+                                               extra_data)
         except urllib2.URLError, e:
             _unirestResponse = UnirestResponse(0, {}, str(e.reason))
 
@@ -120,6 +130,7 @@ HEADERS_KEY = 'headers'
 CALLBACK_KEY = 'callback'
 PARAMS_KEY = 'params'
 AUTH_KEY = 'auth'
+EXTRA_DATA_KEY = 'extra_data'
 
 
 def get_parameters(kwargs):
@@ -137,24 +148,53 @@ def get(url, **kwargs):
         else:
             url += "&"
         url += utils.dict2query(dict((k, v) for k, v in params.iteritems() if v is not None))  # Removing None values/encode unicode objects
-
-    return __dorequest("GET", url, {}, kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("GET",
+                       url,
+                       {},
+                       kwargs.get(HEADERS_KEY, {}),
+                       kwargs.get(AUTH_KEY, None),
+                       kwargs.get(CALLBACK_KEY, None),
+                       kwargs.get(EXTRA_DATA_KEY, None))
 
 
 def post(url, **kwargs):
-    return __dorequest("POST", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("POST",
+                       url,
+                       get_parameters(kwargs),
+                       kwargs.get(HEADERS_KEY, {}),
+                       kwargs.get(AUTH_KEY, None),
+                       kwargs.get(CALLBACK_KEY, None),
+                       kwargs.get(EXTRA_DATA_KEY, None))
 
 
 def put(url, **kwargs):
-    return __dorequest("PUT", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("PUT",
+                       url,
+                       get_parameters(kwargs),
+                       kwargs.get(HEADERS_KEY, {}),
+                       kwargs.get(AUTH_KEY, None),
+                       kwargs.get(CALLBACK_KEY, None),
+                       kwargs.get(EXTRA_DATA_KEY, None))
 
 
 def delete(url, **kwargs):
-    return __dorequest("DELETE", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("DELETE",
+                       url,
+                       get_parameters(kwargs),
+                       kwargs.get(HEADERS_KEY, {}),
+                       kwargs.get(AUTH_KEY, None),
+                       kwargs.get(CALLBACK_KEY, None),
+                       kwargs.get(EXTRA_DATA_KEY, None))
 
 
 def patch(url, **kwargs):
-    return __dorequest("PATCH", url, get_parameters(kwargs), kwargs.get(HEADERS_KEY, {}), kwargs.get(AUTH_KEY, None), kwargs.get(CALLBACK_KEY, None))
+    return __dorequest("PATCH",
+                       url,
+                       get_parameters(kwargs),
+                       kwargs.get(HEADERS_KEY, {}),
+                       kwargs.get(AUTH_KEY, None),
+                       kwargs.get(CALLBACK_KEY, None),
+                       kwargs.get(EXTRA_DATA_KEY, None))
 
 
 def default_header(name, value):
@@ -170,7 +210,7 @@ def timeout(seconds):
     _timeout = seconds
 
 
-def __dorequest(method, url, params, headers, auth, callback=None):
+def __dorequest(method, url, params, headers, auth, callback=None, extra_data=None):
     if callback is None:
         return __request(method, url, params, headers, auth)
     else:
@@ -180,15 +220,18 @@ def __dorequest(method, url, params, headers, auth, callback=None):
                                         params,
                                         headers,
                                         auth,
-                                        callback))
+                                        callback,
+                                        extra_data))
         thread.start()
         return thread
 
 
 class UnirestResponse(object):
-    def __init__(self, code, headers, body):
+    def __init__(self, code, headers, body, request_url, extra_data=None):
         self._code = code
         self._headers = headers
+        self._extra_data = extra_data
+        self._request_url = request_url
 
         if headers.get("Content-Encoding") == 'gzip':
             buf = StringIO(body)
@@ -219,3 +262,11 @@ class UnirestResponse(object):
     @property
     def headers(self):
         return self._headers
+
+    @property
+    def extra_data(self):
+        return self._extra_data
+
+    @property
+    def request_url(self):
+        return self._request_url
