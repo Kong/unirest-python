@@ -4,11 +4,13 @@
 [![Downloads][pypi-downloads]][pypi-url]
 [![Dependencies][versioneye-image]][versioneye-url]
 [![Gitter][gitter-image]][gitter-url]
+[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Not%20Maintained-yellow.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+
 
 ![][unirest-logo]
 
 
-[Unirest](http://unirest.io) is a set of lightweight HTTP libraries available in multiple languages, built and maintained by [Mashape](https://github.com/Mashape), who also maintain the open-source API Gateway [Kong](https://github.com/Mashape/kong). 
+[Unirest](http://unirest.io) is a set of lightweight HTTP libraries available in multiple languages.
 
 
 ## Features
