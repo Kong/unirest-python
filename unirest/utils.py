@@ -1,11 +1,9 @@
 from poster.encode import multipart_encode
 import urllib
 
-def to_utf8(value):
-    if isinstance(value, unicode):
-        return urllib.quote_plus(value.encode('utf-8'))
 
-    return value
+def to_encoded_utf8(value):
+    return urllib.quote_plus(value.encode('utf-8'))
 
 
 def _dictionary_encoder(key, dictionary):
@@ -13,9 +11,9 @@ def _dictionary_encoder(key, dictionary):
     for k, v in dictionary.iteritems():
         if type(v) is file:
             continue
-        key = to_utf8(key)
-        k = to_utf8(k)
-        v = to_utf8(v)
+        key = to_encoded_utf8(key)
+        k = to_encoded_utf8(k)
+        v = to_encoded_utf8(v)
         result.append('{}[{}]={}'.format(key, k, v))
 
     return result
@@ -35,8 +33,8 @@ def dict2query(dictionary):
             nested_query = encoders[v.__class__](k, v)
             query += nested_query
         else:
-            key = to_utf8(k)
-            value = to_utf8(v)
+            key = to_encoded_utf8(k)
+            value = to_encoded_utf8(v)
             query.append('{}={}'.format(key, value))
 
     return '&'.join(query)
