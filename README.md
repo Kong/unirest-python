@@ -16,8 +16,8 @@
 ## Features
 
 * Make `GET`, `POST`, `PUT`, `PATCH`, `DELETE` requests
-* Both syncronous and asynchronous (non-blocking) requests
-* Supports form parameters, file uploads and custom body entities
+* Both synchronous and asynchronous (non-blocking) requests
+* Supports form parameters, file uploads, and custom body entities
 * Supports gzip
 * Supports Basic Authentication natively
 * Customizable timeout
@@ -90,7 +90,7 @@ response = unirest.post("http://httpbin.org/post", headers={ "Accept": "applicat
 )
 ```
 
-**Note**: For the sake of semplicity, even with custom entities in the body, the keyword argument is still `params` (instead of `data` for example). I'm looking for feedback on this.
+**Note**: For the sake of simplicity, even with custom entities in the body, the keyword argument is still `params` (instead of `data` for example). I'm looking for feedback on this.
 
 ### Basic Authentication
 
@@ -114,19 +114,19 @@ unirest.delete(url, headers = {}, params = {}, auth = (), callback = None)
 - `headers` - Request Headers as an associative array
 - `params` - Request Body as an associative array or object
 - `auth` - The Basic Authentication credentials as an array
-- `callback` - Asychronous callback method to be invoked upon result.
+- `callback` - The asynchronous callback method will be invoked upon the result.
 
 # Response
 Upon receiving a response, Unirest returns the result in the form of an Object. This object should always have the same keys for each language regarding to the response details.
 
 - `code` - HTTP Response Status Code (Example 200)
 - `headers`- HTTP Response Headers
-- `body`- Parsed response body where applicable, for example JSON responses are parsed to Objects / Associative Arrays.
+- `body`- Parsed response body where applicable, for example, JSON responses are parsed to Objects / Associative Arrays.
 - `raw_body`- Un-parsed response body
 
 # Advanced Configuration
 
-You can set some advanced configuration to tune Unirest-Python:
+You can set some advanced configurations to tune Unirest-Python:
 
 ### Timeout
 
@@ -145,7 +145,7 @@ unirest.default_header('Header1','Value1')
 unirest.default_header('Header2','Value2')
 ```
 
-You can clear the default headers anytime with:
+You can clear the default headers anytime with the following:
 
 ```python
 unirest.clear_default_headers()
